@@ -13,149 +13,75 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --accent: #B5652A;
-    --accent-dark: #8E4A1E;
-    --accent-light: #F5EDD8;
-    --bg: #F7F4EF;
-    --surface: #FFFFFF;
-    --surface2: #F2EDE6;
-    --text: #1C0F07;
-    --text2: #6B5040;
-    --text3: #9A7D6B;
-    --border: rgba(107,58,34,0.15);
-    --border2: rgba(107,58,34,0.28);
-    --radius: 12px;
-    --radius-sm: 8px;
-    --danger: #C0392B;
-    --danger-bg: #FDF0EE;
+    --accent: #B5652A; --accent-dark: #8E4A1E; --accent-light: #F5EDD8;
+    --bg: #F7F4EF; --surface: #FFFFFF; --surface2: #F2EDE6;
+    --text: #1C0F07; --text2: #6B5040; --text3: #9A7D6B;
+    --border: rgba(107,58,34,0.15); --border2: rgba(107,58,34,0.28);
+    --radius: 12px; --radius-sm: 8px;
+    --danger: #C0392B; --danger-bg: #FDF0EE;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #150A04;
-      --surface: #1F1009;
-      --surface2: #2A160A;
-      --text: #F5EDD8;
-      --text2: #C9A882;
-      --text3: #8A6B52;
-      --border: rgba(245,237,216,0.12);
-      --border2: rgba(245,237,216,0.22);
+      --bg: #150A04; --surface: #1F1009; --surface2: #2A160A;
+      --text: #F5EDD8; --text2: #C9A882; --text3: #8A6B52;
+      --border: rgba(245,237,216,0.12); --border2: rgba(245,237,216,0.22);
       --danger-bg: #2A0E0B;
     }
   }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
   #app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-  .header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px; background: var(--surface);
-    border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 10;
-  }
-  .logo {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
+  .header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 10; }
+  .logo { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .logo i { color: #FDF8F0; font-size: 20px; }
   .header-text .title { font-size: 16px; font-weight: 600; color: var(--text); }
   .header-text .sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
   .content { flex: 1; padding: 16px; }
-  .step { display: none; }
-  .step.active { display: block; }
-  .date-pill {
-    text-align: center; font-size: 12px; color: var(--text3);
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: 99px; padding: 5px 14px; display: inline-block;
-    margin: 0 auto 16px; display: flex; justify-content: center;
-  }
-  .section-label {
-    font-size: 11px; font-weight: 600; color: var(--text3);
-    text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px;
-  }
+  .step { display: none; } .step.active { display: block; }
+  .tabs { display: flex; margin-bottom: 16px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .tab-btn { flex: 1; padding: 10px; background: var(--surface); border: none; cursor: pointer; font-size: 14px; color: var(--text3); font-family: inherit; }
+  .tab-btn.active { background: var(--accent); color: #FDF8F0; font-weight: 600; }
+  .section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
+  .nav-back { display: flex; align-items: center; gap: 6px; color: var(--text3); font-size: 14px; cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; -webkit-tap-highlight-color: transparent; }
+  .nav-back i { font-size: 16px; }
+  .day-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .day-card { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .day-card:active { background: var(--surface2); }
+  .day-card.today { border-color: var(--accent); }
+  .day-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .day-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .today-pill { font-size: 10px; background: var(--accent); color: #FDF8F0; border-radius: 99px; padding: 2px 7px; margin-left: 6px; vertical-align: middle; }
   .room-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-  .room-btn {
-    padding: 10px 4px 8px; border: 0.5px solid var(--border);
-    border-radius: var(--radius-sm); background: var(--surface);
-    cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text);
-    text-align: center; transition: all .15s; line-height: 1.3;
-    -webkit-tap-highlight-color: transparent;
-  }
+  .room-btn { padding: 10px 4px 8px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text); text-align: center; line-height: 1.3; -webkit-tap-highlight-color: transparent; }
   .room-btn:active { transform: scale(.95); }
   .room-btn.has-records { border-color: var(--accent); color: var(--accent); }
-  .room-btn .badge {
-    display: inline-block; background: var(--accent); color: #FDF8F0;
-    border-radius: 99px; font-size: 10px; padding: 1px 6px; margin-top: 4px;
-  }
+  .room-btn .badge { display: inline-block; background: var(--accent); color: #FDF8F0; border-radius: 99px; font-size: 10px; padding: 1px 6px; margin-top: 4px; }
   .product-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-  .product-row {
-    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
-    background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm);
-  }
+  .product-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); }
   .product-emoji { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
   .product-name { flex: 1; font-size: 14px; color: var(--text); }
   .qty-controls { display: flex; align-items: center; gap: 10px; }
-  .qty-btn {
-    width: 32px; height: 32px; border-radius: 50%;
-    border: 0.5px solid var(--border2); background: var(--surface2);
-    cursor: pointer; font-size: 18px; display: flex; align-items: center;
-    justify-content: center; color: var(--text); flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent; transition: transform .1s;
-  }
+  .qty-btn { width: 32px; height: 32px; border-radius: 50%; border: 0.5px solid var(--border2); background: var(--surface2); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; color: var(--text); flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
   .qty-btn:active { transform: scale(.88); }
   .qty-num { width: 28px; text-align: center; font-size: 15px; font-weight: 600; color: var(--text); }
-  .btn-primary {
-    width: 100%; padding: 14px; background: var(--accent); color: #FDF8F0;
-    border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600;
-    cursor: pointer; margin-bottom: 10px; -webkit-tap-highlight-color: transparent;
-    transition: transform .1s;
-  }
+  .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #FDF8F0; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; -webkit-tap-highlight-color: transparent; }
   .btn-primary:active { transform: scale(.98); background: var(--accent-dark); }
-  .btn-secondary {
-    width: 100%; padding: 13px; background: transparent; color: var(--text2);
-    border: 0.5px solid var(--border2); border-radius: var(--radius-sm);
-    font-size: 15px; cursor: pointer; margin-bottom: 10px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn-danger {
-    width: 100%; padding: 13px; background: var(--danger-bg); color: var(--danger);
-    border: 0.5px solid var(--danger); border-radius: var(--radius-sm);
-    font-size: 15px; cursor: pointer; margin-bottom: 10px;
-  }
-  .nav-back {
-    display: flex; align-items: center; gap: 6px; color: var(--text3);
-    font-size: 14px; cursor: pointer; margin-bottom: 14px;
-    background: none; border: none; padding: 0;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .nav-back i { font-size: 16px; }
-  .summary-card {
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
-  }
-  .summary-header {
-    padding: 10px 14px; background: var(--surface2);
-    border-bottom: 0.5px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-  }
+  .btn-secondary { width: 100%; padding: 13px; background: transparent; color: var(--text2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; margin-bottom: 10px; }
+  .btn-danger { width: 100%; padding: 13px; background: var(--danger-bg); color: var(--danger); border: 0.5px solid var(--danger); border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; margin-bottom: 10px; }
+  .summary-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .summary-header { padding: 10px 14px; background: var(--surface2); border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
   .summary-room { font-size: 14px; font-weight: 600; color: var(--text); }
   .summary-time { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
-  .summary-row {
-    padding: 8px 14px; display: flex; justify-content: space-between;
-    font-size: 13px; border-bottom: 0.5px solid var(--border);
-  }
+  .summary-row { padding: 8px 14px; display: flex; justify-content: space-between; font-size: 13px; border-bottom: 0.5px solid var(--border); }
   .summary-row:last-child { border-bottom: none; }
   .summary-row span:last-child { font-weight: 600; color: var(--accent); }
   .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .stat {
-    background: var(--surface2); border-radius: var(--radius-sm);
-    padding: 12px 14px;
-  }
+  .stat { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px 14px; }
   .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
   .stat-val { font-size: 22px; font-weight: 700; color: var(--text); }
   .empty-state { text-align: center; padding: 40px 16px; color: var(--text3); font-size: 14px; }
   .empty-state i { font-size: 36px; display: block; margin-bottom: 10px; }
-  .info-banner {
-    background: var(--accent-light); border: 0.5px solid var(--accent);
-    border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;
-    font-size: 13px; color: var(--accent-dark); display: flex; align-items: center; gap: 8px;
-  }
+  .readonly-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border); border-radius: 99px; padding: 4px 10px; margin-bottom: 14px; }
+  .prev-info { font-size: 12px; color: var(--text3); margin-bottom: 14px; padding: 8px 12px; background: var(--surface2); border-radius: var(--radius-sm); }
 </style>
 </head>
 <body>
@@ -164,135 +90,164 @@
     <div class="logo"><i class="ti ti-coffee"></i></div>
     <div class="header-text">
       <div class="title">Control de bebestibles</div>
-      <div class="sub" id="header-sub">Cafetería — registra por sala y turno</div>
+      <div class="sub">Cafetería — registra por sala y turno</div>
     </div>
   </div>
-
   <div class="content">
 
-    <!-- PASO 1: Salas -->
-    <div class="step active" id="step-rooms">
-      <div class="date-pill" id="today-date"></div>
-      <div class="section-label">Salas</div>
-      <div class="room-grid" id="room-grid"></div>
-      <button class="btn-primary" onclick="goSummary()">
-        <i class="ti ti-table-export"></i> Ver resumen del día
-      </button>
-    </div>
-
-    <!-- PASO 2: Productos -->
-    <div class="step" id="step-products">
-      <button class="nav-back" onclick="showStep('rooms')">
-        <i class="ti ti-arrow-left"></i> Volver a salas
-      </button>
-      <div class="info-banner" id="room-info-banner">
-        <i class="ti ti-info-circle"></i>
-        <span id="room-info-text">Este es un nuevo registro independiente.</span>
+    <!-- PASO 1: Principal con tabs -->
+    <div class="step active" id="step-main">
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-hoy" onclick="setTab('hoy')"><i class="ti ti-calendar-today"></i> Hoy</button>
+        <button class="tab-btn" id="tab-hist" onclick="setTab('hist')"><i class="ti ti-history"></i> Historial</button>
       </div>
-      <div class="section-label" id="prod-label">Sala X — Nuevo registro</div>
-      <div class="product-list" id="product-list"></div>
-      <button class="btn-primary" onclick="saveRoom()">
-        <i class="ti ti-device-floppy"></i> Guardar registro
-      </button>
-      <button class="btn-secondary" onclick="showStep('rooms')">Cancelar</button>
+      <div id="view-hoy">
+        <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:14px;" id="today-date"></div>
+        <div class="section-label">Salas</div>
+        <div class="room-grid" id="room-grid-hoy"></div>
+        <button class="btn-primary" onclick="goSummaryDay(todayKey(),false)"><i class="ti ti-table-export"></i> Ver resumen de hoy</button>
+      </div>
+      <div id="view-hist" style="display:none;">
+        <div class="section-label">Días con registros</div>
+        <div class="day-list" id="day-list"></div>
+        <div id="no-hist" class="empty-state" style="display:none;"><i class="ti ti-calendar-off"></i>No hay días anteriores guardados aún.</div>
+      </div>
     </div>
 
-    <!-- PASO 3: Resumen -->
+    <!-- PASO 2: Registro de productos -->
+    <div class="step" id="step-products">
+      <button class="nav-back" onclick="showStep('main')"><i class="ti ti-arrow-left"></i> Volver a salas</button>
+      <div class="section-label" id="prod-label">Sala X — Nuevo registro</div>
+      <div class="prev-info" id="room-prev-info"></div>
+      <div class="product-list" id="product-list"></div>
+      <button class="btn-primary" onclick="saveRoom()"><i class="ti ti-device-floppy"></i> Guardar registro</button>
+      <button class="btn-secondary" onclick="showStep('main')">Cancelar</button>
+    </div>
+
+    <!-- PASO 3: Resumen de un día -->
     <div class="step" id="step-summary">
-      <button class="nav-back" onclick="showStep('rooms')">
-        <i class="ti ti-arrow-left"></i> Volver a salas
-      </button>
-      <div class="section-label">Resumen del día</div>
+      <button class="nav-back" onclick="backFromSummary()"><i class="ti ti-arrow-left"></i> <span id="back-label">Atrás</span></button>
+      <div class="section-label" id="summary-title">Resumen</div>
+      <div id="readonly-indicator"></div>
       <div class="stats-bar" id="stats-bar"></div>
       <div id="summary-list"></div>
-      <button class="btn-primary" onclick="exportExcel()">
-        <i class="ti ti-download"></i> Exportar a Excel (.xlsx)
-      </button>
-      <button class="btn-danger" onclick="clearDay()">
-        <i class="ti ti-trash"></i> Limpiar todos los registros del día
-      </button>
+      <button class="btn-primary" onclick="exportExcel()"><i class="ti ti-download"></i> Exportar a Excel (.xlsx)</button>
+      <button class="btn-danger" id="btn-clear" onclick="clearDay()"><i class="ti ti-trash"></i> Limpiar registros de este día</button>
     </div>
 
   </div>
 </div>
-
 <script>
-const ROOMS = 15;
+// ============================================================
+// CONFIGURACIÓN — edita aquí para agregar/quitar productos
+// ============================================================
 const PRODUCTS = [
-  {id:'agua_gas',    name:'Agua con gas',       emoji:'💧'},
-  {id:'agua_sin',    name:'Agua sin gas',        emoji:'💧'},
-  {id:'coca_orig',   name:'Coca-Cola Original',  emoji:'🥤'},
-  {id:'coca_zero',   name:'Coca-Cola Zero',      emoji:'🥤'},
-  {id:'coca_light',  name:'Coca-Cola Light',     emoji:'🥤'},
-  {id:'cafe',        name:'Café',                emoji:'☕'},
-  {id:'te',          name:'Té',                  emoji:'🍵'},
-  {id:'jugo_manzana',name:'Jugo de manzana',     emoji:'🍎'},
-  {id:'jugo_pina',   name:'Jugo de piña',        emoji:'🍍'},
-  {id:'jugo_frutilla',name:'Jugo de frutilla',   emoji:'🍓'},
+  {id:'agua_gas',     name:'Agua con gas',        emoji:'💧'},
+  {id:'agua_sin',     name:'Agua sin gas',         emoji:'💧'},
+  {id:'coca_orig',    name:'Coca-Cola Original',   emoji:'🥤'},
+  {id:'coca_zero',    name:'Coca-Cola Zero',       emoji:'🥤'},
+  {id:'coca_light',   name:'Coca-Cola Light',      emoji:'🥤'},
+  {id:'cafe',         name:'Café',                 emoji:'☕'},
+  {id:'te',           name:'Té',                   emoji:'🍵'},
+  {id:'jugo_manzana', name:'Jugo de manzana',      emoji:'🍎'},
+  {id:'jugo_pina',    name:'Jugo de piña',         emoji:'🍍'},
+  {id:'jugo_frutilla',name:'Jugo de frutilla',     emoji:'🍓'},
+  // Para agregar más: copia la línea de arriba y cambia id, name y emoji
 ];
+const ROOMS = 15;
+// ============================================================
 
-function todayKey() {
-  return 'cafe_v2_' + new Date().toISOString().slice(0, 10);
+const PREFIX = 'cafe_v2_';
+function todayKey() { return PREFIX + new Date().toISOString().slice(0, 10); }
+function dateFromKey(k) { return k.replace(PREFIX, ''); }
+
+let currentRoom = null, tempQty = {}, viewingDay = null, comingFromHist = false;
+
+function loadDay(key) { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : {}; } catch(e) { return {}; } }
+function persistDay(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
+function allDayKeys() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(PREFIX)) keys.push(k); }
+  return keys.sort().reverse();
 }
 
-// Estructura: data['sala_3'] = [ {ts: ISO string, productos: {id: cantidad}}, ... ]
-let data = {};
-let currentRoom = null;
-let tempQty = {};
-
-function load() {
-  try { const s = localStorage.getItem(todayKey()); if (s) data = JSON.parse(s); } catch(e) { data = {}; }
+function fmtDateFromISO(iso) {
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('es-CL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 }
-function persist() {
-  try { localStorage.setItem(todayKey(), JSON.stringify(data)); } catch(e) {}
-}
+function fmtTime(iso) { return new Date(iso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'}); }
 
-load();
-
-function fmtDate() {
-  return new Date().toLocaleDateString('es-CL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-}
-function fmtTime(iso) {
-  return new Date(iso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
-}
-
-document.getElementById('today-date').textContent = fmtDate();
+document.getElementById('today-date').textContent = fmtDateFromISO(new Date().toISOString().slice(0, 10));
 
 function showStep(name) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById('step-' + name).classList.add('active');
-  if (name === 'rooms') renderRooms();
-  if (name === 'summary') renderSummary();
+  if (name === 'main') { renderRoomsHoy(); renderHistorial(); }
 }
 
-function renderRooms() {
-  const g = document.getElementById('room-grid');
+function setTab(t) {
+  document.getElementById('tab-hoy').classList.toggle('active', t === 'hoy');
+  document.getElementById('tab-hist').classList.toggle('active', t === 'hist');
+  document.getElementById('view-hoy').style.display = t === 'hoy' ? 'block' : 'none';
+  document.getElementById('view-hist').style.display = t === 'hist' ? 'block' : 'none';
+  if (t === 'hist') renderHistorial();
+}
+
+function renderRoomsHoy() {
+  const data = loadDay(todayKey());
+  const g = document.getElementById('room-grid-hoy');
   g.innerHTML = '';
   for (let i = 1; i <= ROOMS; i++) {
-    const key = 'sala_' + i;
-    const records = data[key] || [];
+    const records = data['sala_' + i] || [];
     const b = document.createElement('button');
     b.className = 'room-btn' + (records.length > 0 ? ' has-records' : '');
-    b.innerHTML = 'Sala ' + i + (records.length > 0
-      ? `<br><span class="badge">${records.length} reg.</span>`
-      : '');
+    b.innerHTML = 'Sala ' + i + (records.length > 0 ? `<br><span class="badge">${records.length} reg.</span>` : '');
     b.onclick = () => openRoom(i);
     g.appendChild(b);
   }
 }
-renderRooms();
+renderRoomsHoy();
+
+function renderHistorial() {
+  const keys = allDayKeys();
+  const tk = todayKey();
+  const list = document.getElementById('day-list');
+  const noHist = document.getElementById('no-hist');
+  list.innerHTML = '';
+
+  // Hoy siempre arriba
+  const todayData = loadDay(tk);
+  const todayRegs = Object.values(todayData).reduce((s, r) => s + (r ? r.length : 0), 0);
+  const todayCard = document.createElement('div');
+  todayCard.className = 'day-card today';
+  todayCard.innerHTML = `<div><div class="day-name">Hoy <span class="today-pill">HOY</span></div><div class="day-meta">${todayRegs} registro${todayRegs !== 1 ? 's' : ''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
+  todayCard.onclick = () => goSummaryDay(tk, false);
+  list.appendChild(todayCard);
+
+  const hist = keys.filter(k => k !== tk);
+  if (hist.length === 0) { noHist.style.display = 'block'; return; }
+  noHist.style.display = 'none';
+  hist.forEach(k => {
+    const d = loadDay(k);
+    const regs = Object.values(d).reduce((s, r) => s + (r ? r.length : 0), 0);
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.innerHTML = `<div><div class="day-name">${fmtDateFromISO(dateFromKey(k))}</div><div class="day-meta">${regs} registro${regs !== 1 ? 's' : ''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
+    card.onclick = () => goSummaryDay(k, true);
+    list.appendChild(card);
+  });
+}
 
 function openRoom(n) {
   currentRoom = n;
   tempQty = {};
   PRODUCTS.forEach(p => { tempQty[p.id] = 0; });
-
-  const prevCount = (data['sala_' + n] || []).length;
+  const data = loadDay(todayKey());
+  const prev = (data['sala_' + n] || []).length;
   document.getElementById('prod-label').textContent = 'Sala ' + n + ' — Nuevo registro';
-  document.getElementById('room-info-text').textContent = prevCount === 0
+  document.getElementById('room-prev-info').textContent = prev === 0
     ? 'Primer registro del día para esta sala.'
-    : `Esta sala ya tiene ${prevCount} registro${prevCount > 1 ? 's' : ''} hoy. Este será uno nuevo e independiente.`;
-
+    : `Esta sala ya tiene ${prev} registro${prev > 1 ? 's' : ''} hoy. Este será uno nuevo e independiente.`;
   renderProducts();
   showStep('products');
 }
@@ -303,8 +258,7 @@ function renderProducts() {
   PRODUCTS.forEach(p => {
     const row = document.createElement('div');
     row.className = 'product-row';
-    row.innerHTML = `
-      <span class="product-emoji">${p.emoji}</span>
+    row.innerHTML = `<span class="product-emoji">${p.emoji}</span>
       <span class="product-name">${p.name}</span>
       <div class="qty-controls">
         <button class="qty-btn" onclick="chg('${p.id}',-1)"><i class="ti ti-minus"></i></button>
@@ -324,50 +278,59 @@ function chg(id, delta) {
 function saveRoom() {
   const hasAny = Object.values(tempQty).some(v => v > 0);
   if (!hasAny) { alert('Agrega al menos un producto antes de guardar.'); return; }
+  const data = loadDay(todayKey());
   const key = 'sala_' + currentRoom;
   if (!data[key]) data[key] = [];
   data[key].push({ ts: new Date().toISOString(), productos: { ...tempQty } });
-  persist();
-  showStep('rooms');
+  persistDay(todayKey(), data);
+  showStep('main');
 }
 
-function goSummary() { showStep('summary'); }
+function goSummaryDay(dayKey, fromHist) {
+  viewingDay = dayKey;
+  comingFromHist = fromHist || false;
+  const isToday = dayKey === todayKey();
+  document.getElementById('summary-title').textContent = isToday ? 'Resumen de hoy' : 'Resumen — ' + fmtDateFromISO(dateFromKey(dayKey));
+  document.getElementById('back-label').textContent = comingFromHist ? 'Historial' : 'Salas';
+  document.getElementById('readonly-indicator').innerHTML = isToday ? '' :
+    '<div class="readonly-badge"><i class="ti ti-lock" style="font-size:13px"></i> Día anterior — solo lectura</div>';
+  document.getElementById('btn-clear').style.display = isToday ? 'block' : 'none';
+  renderSummaryForDay(dayKey);
+  showStep('summary');
+}
 
-function renderSummary() {
+function backFromSummary() {
+  showStep('main');
+  if (comingFromHist) setTab('hist');
+}
+
+function renderSummaryForDay(dayKey) {
+  const data = loadDay(dayKey);
   const allRecords = [];
-  let totalUnidades = 0;
-  let totalRegistros = 0;
-
+  let totalUnidades = 0, totalRegistros = 0;
   for (let i = 1; i <= ROOMS; i++) {
-    const records = data['sala_' + i] || [];
-    records.forEach(r => {
+    (data['sala_' + i] || []).forEach(r => {
       totalRegistros++;
       const total = PRODUCTS.reduce((s, p) => s + (r.productos[p.id] || 0), 0);
       totalUnidades += total;
-      allRecords.push({ sala: i, ts: r.ts, productos: r.productos, total });
+      allRecords.push({ sala: i, ts: r.ts, productos: r.productos });
     });
   }
-
   document.getElementById('stats-bar').innerHTML = `
-    <div class="stat"><div class="stat-label">Registros del día</div><div class="stat-val">${totalRegistros}</div></div>
+    <div class="stat"><div class="stat-label">Registros</div><div class="stat-val">${totalRegistros}</div></div>
     <div class="stat"><div class="stat-label">Unidades totales</div><div class="stat-val">${totalUnidades}</div></div>`;
-
   if (allRecords.length === 0) {
-    document.getElementById('summary-list').innerHTML =
-      '<div class="empty-state"><i class="ti ti-mood-empty"></i>Aún no hay registros hoy.</div>';
+    document.getElementById('summary-list').innerHTML = '<div class="empty-state"><i class="ti ti-mood-empty"></i>Sin registros.</div>';
     return;
   }
-
   allRecords.sort((a, b) => a.sala - b.sala || a.ts.localeCompare(b.ts));
-
   let html = '';
   allRecords.forEach(r => {
     const items = PRODUCTS.filter(p => (r.productos[p.id] || 0) > 0);
-    html += `<div class="summary-card">
-      <div class="summary-header">
-        <span class="summary-room">Sala ${r.sala}</span>
-        <span class="summary-time"><i class="ti ti-clock"></i> ${fmtTime(r.ts)}</span>
-      </div>`;
+    html += `<div class="summary-card"><div class="summary-header">
+      <span class="summary-room">Sala ${r.sala}</span>
+      <span class="summary-time"><i class="ti ti-clock"></i> ${fmtTime(r.ts)}</span>
+    </div>`;
     items.forEach(p => {
       html += `<div class="summary-row"><span>${p.emoji} ${p.name}</span><span>${r.productos[p.id]}</span></div>`;
     });
@@ -377,74 +340,39 @@ function renderSummary() {
 }
 
 function exportExcel() {
-  load();
-  const date = new Date().toLocaleDateString('es-CL');
+  const data = loadDay(viewingDay);
+  const dateStr = dateFromKey(viewingDay);
   const wb = XLSX.utils.book_new();
-
-  // Hoja 1: Detalle completo (una fila por registro)
-  const hdr = ['Sala', 'Hora', ...PRODUCTS.map(p => p.name), 'Total registro'];
+  const hdr = ['Sala', 'Hora', ...PRODUCTS.map(p => p.name), 'Total'];
   const rows = [hdr];
-  const totalsRow = ['TOTAL', '', ...PRODUCTS.map(() => 0), 0];
-
-  for (let i = 1; i <= ROOMS; i++) {
-    const records = data['sala_' + i] || [];
-    records.forEach(r => {
-      const row = ['Sala ' + i, fmtTime(r.ts)];
-      let rt = 0;
-      PRODUCTS.forEach((p, idx) => {
-        const v = r.productos[p.id] || 0;
-        row.push(v);
-        totalsRow[idx + 2] += v;
-        rt += v;
-      });
-      row.push(rt);
-      rows.push(row);
-    });
-  }
-  totalsRow[totalsRow.length - 1] = totalsRow.slice(2, -1).reduce((s, v) => s + v, 0);
-  rows.push([]);
-  rows.push(totalsRow);
-
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols'] = [{wch:10},{wch:8},...PRODUCTS.map(()=>({wch:18})),{wch:14}];
-  XLSX.utils.book_append_sheet(wb, ws, 'Detalle ' + date);
-
-  // Hoja 2: Resumen por producto
-  const sum = [['Producto', 'Total unidades']];
-  const globales = {};
-  PRODUCTS.forEach(p => globales[p.id] = 0);
+  const totals = ['TOTAL', '', ...PRODUCTS.map(() => 0), 0];
   for (let i = 1; i <= ROOMS; i++) {
     (data['sala_' + i] || []).forEach(r => {
-      PRODUCTS.forEach(p => { globales[p.id] += (r.productos[p.id] || 0); });
+      const row = ['Sala ' + i, fmtTime(r.ts)];
+      let rt = 0;
+      PRODUCTS.forEach((p, idx) => { const v = r.productos[p.id] || 0; row.push(v); totals[idx+2] += v; rt += v; });
+      row.push(rt); rows.push(row);
     });
   }
-  PRODUCTS.forEach(p => sum.push([p.name, globales[p.id]]));
-  const ws2 = XLSX.utils.aoa_to_sheet(sum);
-  ws2['!cols'] = [{wch:22},{wch:16}];
+  totals[totals.length-1] = totals.slice(2,-1).reduce((s,v)=>s+v,0);
+  rows.push([]); rows.push(totals);
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{wch:10},{wch:8},...PRODUCTS.map(()=>({wch:18})),{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Detalle');
+  const sum = [['Producto','Total']];
+  const g = {}; PRODUCTS.forEach(p => g[p.id] = 0);
+  for (let i = 1; i <= ROOMS; i++) { (data['sala_'+i]||[]).forEach(r => { PRODUCTS.forEach(p => { g[p.id] += (r.productos[p.id]||0); }); }); }
+  PRODUCTS.forEach(p => sum.push([p.name, g[p.id]]));
+  const ws2 = XLSX.utils.aoa_to_sheet(sum); ws2['!cols'] = [{wch:22},{wch:12}];
   XLSX.utils.book_append_sheet(wb, ws2, 'Por producto');
-
-  // Hoja 3: Resumen por sala
-  const salaSummary = [['Sala', 'N° registros', 'Total unidades']];
-  for (let i = 1; i <= ROOMS; i++) {
-    const records = data['sala_' + i] || [];
-    if (records.length === 0) continue;
-    const total = records.reduce((s, r) => s + PRODUCTS.reduce((s2, p) => s2 + (r.productos[p.id] || 0), 0), 0);
-    salaSummary.push(['Sala ' + i, records.length, total]);
-  }
-  const ws3 = XLSX.utils.aoa_to_sheet(salaSummary);
-  ws3['!cols'] = [{wch:10},{wch:14},{wch:16}];
-  XLSX.utils.book_append_sheet(wb, ws3, 'Por sala');
-
-  const fname = 'Bebestibles_' + new Date().toISOString().slice(0, 10) + '.xlsx';
-  XLSX.writeFile(wb, fname);
+  XLSX.writeFile(wb, 'Bebestibles_' + dateStr + '.xlsx');
 }
 
 function clearDay() {
-  if (confirm('¿Limpiar TODOS los registros de hoy? Esta acción no se puede deshacer.')) {
-    localStorage.removeItem(todayKey());
-    data = {};
-    renderSummary();
-  }
+  if (!confirm('¿Limpiar todos los registros de este día? No se puede deshacer.')) return;
+  localStorage.removeItem(viewingDay);
+  viewingDay = null;
+  showStep('main');
 }
 </script>
 </body>
