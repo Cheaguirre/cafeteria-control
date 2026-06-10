@@ -5,83 +5,152 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#B5652A">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Bebestibles">
 <title>Control de Bebestibles</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --accent: #B5652A; --accent-dark: #8E4A1E; --accent-light: #F5EDD8;
-    --bg: #F7F4EF; --surface: #FFFFFF; --surface2: #F2EDE6;
-    --text: #1C0F07; --text2: #6B5040; --text3: #9A7D6B;
-    --border: rgba(107,58,34,0.15); --border2: rgba(107,58,34,0.28);
-    --radius: 12px; --radius-sm: 8px;
-    --danger: #C0392B; --danger-bg: #FDF0EE;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --accent:#B5652A;--accent-dark:#8E4A1E;--accent-light:#F5EDD8;
+  --bg:#F7F4EF;--surface:#FFFFFF;--surface2:#F2EDE6;
+  --text:#1C0F07;--text2:#6B5040;--text3:#9A7D6B;
+  --border:rgba(107,58,34,0.15);--border2:rgba(107,58,34,0.28);
+  --radius:12px;--radius-sm:8px;
+  --danger:#C0392B;--danger-bg:#FDF0EE;
+  --success:#1E7C45;--success-bg:#EAF7EF;
+  --extra:#2E86AB;--extra-bg:#EBF5FB;
+  --extra-dark:#1A5276;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#150A04;--surface:#1F1009;--surface2:#2A160A;
+    --text:#F5EDD8;--text2:#C9A882;--text3:#8A6B52;
+    --border:rgba(245,237,216,0.12);--border2:rgba(245,237,216,0.22);
+    --danger-bg:#2A0E0B;--success-bg:#0D2A1A;
+    --extra-bg:#0A1F2E;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #150A04; --surface: #1F1009; --surface2: #2A160A;
-      --text: #F5EDD8; --text2: #C9A882; --text3: #8A6B52;
-      --border: rgba(245,237,216,0.12); --border2: rgba(245,237,216,0.22);
-      --danger-bg: #2A0E0B;
-    }
-  }
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-  #app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-  .header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 10; }
-  .logo { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .logo i { color: #FDF8F0; font-size: 20px; }
-  .header-text .title { font-size: 16px; font-weight: 600; color: var(--text); }
-  .header-text .sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
-  .content { flex: 1; padding: 16px; }
-  .step { display: none; } .step.active { display: block; }
-  .tabs { display: flex; margin-bottom: 16px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
-  .tab-btn { flex: 1; padding: 10px; background: var(--surface); border: none; cursor: pointer; font-size: 14px; color: var(--text3); font-family: inherit; }
-  .tab-btn.active { background: var(--accent); color: #FDF8F0; font-weight: 600; }
-  .section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
-  .nav-back { display: flex; align-items: center; gap: 6px; color: var(--text3); font-size: 14px; cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; -webkit-tap-highlight-color: transparent; }
-  .nav-back i { font-size: 16px; }
-  .day-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .day-card { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .day-card:active { background: var(--surface2); }
-  .day-card.today { border-color: var(--accent); }
-  .day-name { font-size: 14px; font-weight: 500; color: var(--text); }
-  .day-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .today-pill { font-size: 10px; background: var(--accent); color: #FDF8F0; border-radius: 99px; padding: 2px 7px; margin-left: 6px; vertical-align: middle; }
-  .room-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-  .room-btn { padding: 10px 4px 8px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text); text-align: center; line-height: 1.3; -webkit-tap-highlight-color: transparent; }
-  .room-btn:active { transform: scale(.95); }
-  .room-btn.has-records { border-color: var(--accent); color: var(--accent); }
-  .room-btn .badge { display: inline-block; background: var(--accent); color: #FDF8F0; border-radius: 99px; font-size: 10px; padding: 1px 6px; margin-top: 4px; }
-  .product-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-  .product-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); }
-  .product-emoji { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
-  .product-name { flex: 1; font-size: 14px; color: var(--text); }
-  .qty-controls { display: flex; align-items: center; gap: 10px; }
-  .qty-btn { width: 32px; height: 32px; border-radius: 50%; border: 0.5px solid var(--border2); background: var(--surface2); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; color: var(--text); flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
-  .qty-btn:active { transform: scale(.88); }
-  .qty-num { width: 28px; text-align: center; font-size: 15px; font-weight: 600; color: var(--text); }
-  .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #FDF8F0; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; -webkit-tap-highlight-color: transparent; }
-  .btn-primary:active { transform: scale(.98); background: var(--accent-dark); }
-  .btn-secondary { width: 100%; padding: 13px; background: transparent; color: var(--text2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; margin-bottom: 10px; }
-  .btn-danger { width: 100%; padding: 13px; background: var(--danger-bg); color: var(--danger); border: 0.5px solid var(--danger); border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; margin-bottom: 10px; }
-  .summary-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
-  .summary-header { padding: 10px 14px; background: var(--surface2); border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .summary-room { font-size: 14px; font-weight: 600; color: var(--text); }
-  .summary-time { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
-  .summary-row { padding: 8px 14px; display: flex; justify-content: space-between; font-size: 13px; border-bottom: 0.5px solid var(--border); }
-  .summary-row:last-child { border-bottom: none; }
-  .summary-row span:last-child { font-weight: 600; color: var(--accent); }
-  .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .stat { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px 14px; }
-  .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
-  .stat-val { font-size: 22px; font-weight: 700; color: var(--text); }
-  .empty-state { text-align: center; padding: 40px 16px; color: var(--text3); font-size: 14px; }
-  .empty-state i { font-size: 36px; display: block; margin-bottom: 10px; }
-  .readonly-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border); border-radius: 99px; padding: 4px 10px; margin-bottom: 14px; }
-  .prev-info { font-size: 12px; color: var(--text3); margin-bottom: 14px; padding: 8px 12px; background: var(--surface2); border-radius: var(--radius-sm); }
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+.header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:10;}
+.logo{width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo i{color:#FDF8F0;font-size:20px;}
+.header-text .title{font-size:16px;font-weight:600;color:var(--text);}
+.header-text .sub{font-size:12px;color:var(--text3);margin-top:1px;}
+.content{flex:1;padding:16px;}
+.step{display:none;}.step.active{display:block;}
+.tabs{display:flex;margin-bottom:16px;border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.tab-btn{flex:1;padding:10px;background:var(--surface);border:none;cursor:pointer;font-size:14px;color:var(--text3);font-family:inherit;}
+.tab-btn.active{background:var(--accent);color:#FDF8F0;font-weight:600;}
+.section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;}
+.nav-back{display:flex;align-items:center;gap:6px;color:var(--text3);font-size:14px;cursor:pointer;margin-bottom:14px;background:none;border:none;padding:0;-webkit-tap-highlight-color:transparent;}
+.nav-back i{font-size:16px;}
+
+/* Salas */
+.room-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.room-btn{padding:10px 4px 8px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;color:var(--text);text-align:center;line-height:1.3;-webkit-tap-highlight-color:transparent;position:relative;}
+.room-btn:active{transform:scale(.95);}
+.room-btn.has-records{border-color:var(--accent);color:var(--accent);}
+.room-btn .badge{display:inline-block;background:var(--accent);color:#FDF8F0;border-radius:99px;font-size:10px;padding:1px 6px;margin-top:4px;}
+.room-btn .edit-hint{position:absolute;top:4px;right:4px;font-size:11px;color:var(--text3);opacity:.6;}
+
+/* Extras */
+.extra-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px;}
+.extra-btn{padding:14px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:14px;font-weight:500;color:var(--text);text-align:center;line-height:1.3;-webkit-tap-highlight-color:transparent;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;}
+.extra-btn:active{transform:scale(.95);}
+.extra-btn.has-records{border-color:var(--extra);color:var(--extra);background:var(--extra-bg);}
+.extra-btn .badge{display:inline-block;background:var(--extra);color:#FDF8F0;border-radius:99px;font-size:10px;padding:1px 8px;}
+
+/* Productos */
+.product-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.product-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);}
+.product-emoji{font-size:18px;width:24px;text-align:center;flex-shrink:0;}
+.product-name{flex:1;font-size:14px;color:var(--text);}
+.qty-controls{display:flex;align-items:center;gap:10px;}
+.qty-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.qty-btn:active{transform:scale(.88);}
+.qty-num{width:28px;text-align:center;font-size:15px;font-weight:600;color:var(--text);}
+
+/* Botones */
+.btn-primary{width:100%;padding:14px;background:var(--accent);color:#FDF8F0;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent;}
+.btn-primary:active{transform:scale(.98);background:var(--accent-dark);}
+.btn-secondary{width:100%;padding:13px;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);font-size:15px;cursor:pointer;margin-bottom:10px;}
+.btn-danger{width:100%;padding:13px;background:var(--danger-bg);color:var(--danger);border:0.5px solid var(--danger);border-radius:var(--radius-sm);font-size:15px;cursor:pointer;margin-bottom:10px;}
+
+/* Historial días */
+.day-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.day-card{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.day-card:active{background:var(--surface2);}
+.day-card.today{border-color:var(--accent);}
+.day-name{font-size:14px;font-weight:500;color:var(--text);}
+.day-meta{font-size:12px;color:var(--text3);margin-top:2px;}
+.today-pill{font-size:10px;background:var(--accent);color:#FDF8F0;border-radius:99px;padding:2px 7px;margin-left:6px;vertical-align:middle;}
+
+/* Stats */
+.stats-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.stat{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:4px;}
+.stat-val{font-size:22px;font-weight:700;color:var(--text);}
+
+/* Tarjetas de registro con edición */
+.record-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+.record-header{padding:10px 14px;background:var(--surface2);border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.record-room{font-size:14px;font-weight:600;color:var(--text);}
+.record-time{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px;}
+.record-actions{display:flex;gap:6px;margin-left:10px;}
+.action-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.action-btn.edit{color:var(--accent);}
+.action-btn.del{color:var(--danger);border-color:var(--danger);background:var(--danger-bg);}
+.action-btn:active{transform:scale(.88);}
+.record-row{padding:8px 14px;display:flex;justify-content:space-between;font-size:13px;border-bottom:0.5px solid var(--border);}
+.record-row:last-child{border-bottom:none;}
+.record-row span:last-child{font-weight:600;color:var(--accent);}
+
+.empty-state{text-align:center;padding:40px 16px;color:var(--text3);font-size:14px;}
+.empty-state i{font-size:36px;display:block;margin-bottom:10px;}
+.readonly-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#EAF7EF;color:var(--success);border:0.5px solid var(--success);border-radius:99px;padding:4px 10px;margin-bottom:14px;}
+.prev-info{font-size:12px;color:var(--text3);margin-bottom:14px;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);}
+.edit-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#FFF7F0;color:var(--accent);border:0.5px solid var(--accent);border-radius:99px;padding:4px 10px;margin-bottom:14px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px);}
+.modal{background:var(--surface);border-radius:var(--radius);width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden;}
+.modal-header{padding:14px 16px;border-bottom:0.5px solid var(--border);font-size:15px;font-weight:600;}
+.modal-body{padding:16px;}
+.modal-footer{display:flex;gap:8px;padding:12px 16px;border-top:0.5px solid var(--border);}
+.modal-footer .btn-primary,.modal-footer .btn-secondary,.modal-footer .btn-danger{margin-bottom:0;}
+.room-select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.room-select-btn{padding:12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;font-size:14px;font-weight:500;text-align:center;-webkit-tap-highlight-color:transparent;}
+.room-select-btn:active{transform:scale(.95);}
+.room-select-btn.selected{background:var(--accent);color:#FDF8F0;border-color:var(--accent);}
+
+/* Calendario */
+.calendar-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:16px;}
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.cal-month{font-size:15px;font-weight:600;}
+.cal-nav-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);}
+.cal-nav-btn:active{transform:scale(.9);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;}
+.cal-day-label{font-size:10px;font-weight:600;color:var(--text3);padding:4px 0;}
+.cal-day{padding:8px 2px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;position:relative;background:var(--surface2);border:0.5px solid transparent;-webkit-tap-highlight-color:transparent;}
+.cal-day:active{transform:scale(.95);}
+.cal-day.today{background:var(--accent);color:#FDF8F0;font-weight:600;}
+.cal-day.has-data{background:var(--success-bg);color:var(--success);border-color:var(--success);font-weight:600;}
+.cal-day.has-data.today{background:var(--accent);color:#FDF8F0;border-color:var(--accent);}
+.cal-day.selected{background:var(--accent-dark);color:#FDF8F0;font-weight:600;border-color:var(--accent-dark);}
+.cal-day.other-month{color:var(--text3);opacity:.5;}
+.cal-day .dot{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:currentColor;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:var(--surface);padding:10px 20px;border-radius:99px;font-size:13px;font-weight:500;z-index:999;transition:transform .3s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* Selector Exportación */
+.export-box{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px;}
+.select-style{width:100%;padding:10px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;margin-bottom:10px;}
+.date-range-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.date-range-inputs input{padding:10px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-family:inherit;font-size:13px;width:100%;}
 </style>
 </head>
 <body>
@@ -90,7 +159,7 @@
     <div class="logo"><i class="ti ti-coffee"></i></div>
     <div class="header-text">
       <div class="title">Control de bebestibles</div>
-      <div class="sub">Cafetería — registra por sala y turno</div>
+      <div class="sub">Cafetería — registra por sala, extras y turno</div>
     </div>
   </div>
   <div class="content">
@@ -104,9 +173,35 @@
         <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:14px;" id="today-date"></div>
         <div class="section-label">Salas</div>
         <div class="room-grid" id="room-grid-hoy"></div>
+        <div class="section-label">Extras (Consumo personal)</div>
+        <div class="extra-grid" id="extra-grid-hoy"></div>
         <button class="btn-primary" onclick="goSummaryDay(todayKey(),false)"><i class="ti ti-table-export"></i> Ver resumen de hoy</button>
       </div>
       <div id="view-hist" style="display:none;">
+        <div class="section-label">Herramientas de Exportación</div>
+        <div class="export-box">
+          <label class="section-label" style="margin-bottom:4px; display:block;">Periodo del Reporte Excel</label>
+          <select id="export-period" class="select-style" onchange="toggleCustomDates()">
+            <option value="day">Sólo el día seleccionado</option>
+            <option value="week">Semana actual (Lunes a Domingo)</option>
+            <option value="month">Mes actual</option>
+            <option value="custom">Rango personalizado...</option>
+          </select>
+          <div id="custom-date-inputs" class="date-range-inputs" style="display:none;">
+            <div>
+              <span class="section-label" style="font-size:10px;">Desde</span>
+              <input type="date" id="export-from">
+            </div>
+            <div>
+              <span class="section-label" style="font-size:10px;">Hasta</span>
+              <input type="date" id="export-to">
+            </div>
+          </div>
+          <button class="btn-primary" onclick="exportBulkExcel()" style="margin-bottom:0; background:var(--extra);"><i class="ti ti-file-spreadsheet"></i> Descargar Reporte Consolidado</button>
+        </div>
+
+        <div class="section-label">Calendario</div>
+        <div class="calendar-wrap" id="calendar-wrap"></div>
         <div class="section-label">Días con registros</div>
         <div class="day-list" id="day-list"></div>
         <div id="no-hist" class="empty-state" style="display:none;"><i class="ti ti-calendar-off"></i>No hay días anteriores guardados aún.</div>
@@ -114,12 +209,13 @@
     </div>
 
     <div class="step" id="step-products">
-      <button class="nav-back" onclick="showStep('main')"><i class="ti ti-arrow-left"></i> Volver a salas</button>
+      <button class="nav-back" onclick="cancelEdit()"><i class="ti ti-arrow-left"></i> Volver</button>
+      <div id="edit-badge-wrap"></div>
       <div class="section-label" id="prod-label">Sala X — Nuevo registro</div>
       <div class="prev-info" id="room-prev-info"></div>
       <div class="product-list" id="product-list"></div>
-      <button class="btn-primary" onclick="saveRoom()"><i class="ti ti-device-floppy"></i> Guardar registro</button>
-      <button class="btn-secondary" onclick="showStep('main')">Cancelar</button>
+      <button class="btn-primary" onclick="saveRoom()"><i class="ti ti-device-floppy"></i> <span id="save-btn-label">Guardar registro</span></button>
+      <button class="btn-secondary" onclick="cancelEdit()">Cancelar</button>
     </div>
 
     <div class="step" id="step-summary">
@@ -127,13 +223,47 @@
       <div class="section-label" id="summary-title">Resumen</div>
       <div id="readonly-indicator"></div>
       <div class="stats-bar" id="stats-bar"></div>
+      
+      <div id="history-add-actions" style="margin-bottom:14px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+         <button class="btn-secondary" onclick="openRoomFromHistory()" style="margin-bottom:0; padding:10px; font-size:13px;"><i class="ti ti-plus"></i> Añadir Sala</button>
+         <button class="btn-secondary" onclick="openExtraFromHistory()" style="margin-bottom:0; padding:10px; font-size:13px;"><i class="ti ti-plus"></i> Añadir Extras</button>
+      </div>
+
       <div id="summary-list"></div>
-      <button class="btn-primary" onclick="exportExcel()"><i class="ti ti-download"></i> Exportar a Excel (.xlsx)</button>
+      <button class="btn-primary" onclick="exportExcel()"><i class="ti ti-download"></i> Exportar este día (.xlsx)</button>
       <button class="btn-danger" id="btn-clear" onclick="clearDay()"><i class="ti ti-trash"></i> Limpiar registros de este día</button>
     </div>
 
   </div>
 </div>
+<div class="toast" id="toast"></div>
+
+<div id="modal-room" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeRoomModal()">
+  <div class="modal">
+    <div class="modal-header"><i class="ti ti-door"></i> Cambiar sala del registro</div>
+    <div class="modal-body">
+      <div class="section-label">Selecciona la nueva sala</div>
+      <div class="room-select-grid" id="room-select-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeRoomModal()">Cancelar</button>
+      <button class="btn-primary" onclick="confirmChangeRoom()">Confirmar cambio</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-add-history-room" class="modal-overlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-header"><i class="ti ti-plus"></i> Selecciona la Sala a agregar</div>
+    <div class="modal-body">
+      <div class="room-select-grid" id="history-room-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="document.getElementById('modal-add-history-room').style.display='none'">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CONFIGURACIÓN — edita aquí para agregar/quitar productos
@@ -149,481 +279,843 @@ const PRODUCTS = [
   {id:'jugo_manzana', name:'Jugo de manzana',      emoji:'🍎'},
   {id:'jugo_pina',    name:'Jugo de piña',         emoji:'🍍'},
   {id:'jugo_frutilla',name:'Jugo de frutilla',     emoji:'🍓'},
-  // Para agregar más: copia una línea y cambia id, name y emoji
 ];
 const ROOMS = 15;
 // ============================================================
 
 const PREFIX = 'cafe_v2_';
-function todayKey() { return PREFIX + new Date().toISOString().slice(0, 10); }
-function dateFromKey(k) { return k.replace(PREFIX, ''); }
+function todayKey(){ return PREFIX + new Date().toISOString().slice(0,10); }
+function dateFromKey(k){ return k.replace(PREFIX,''); }
 
-let currentRoom = null, tempQty = {}, viewingDay = null, comingFromHist = false;
+// Estado de edición
+let currentRoom = null;
+let isExtra = false;
+let tempQty = {};
+let editingDay = null;   // key del día que se edita
+let editingRecordIdx = null; // índice del registro dentro de sala_X, null = nuevo
+let viewingDay = null;
+let comingFromHist = false;
 
-function loadDay(key) { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : {}; } catch(e) { return {}; } }
-function persistDay(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
-function allDayKeys() {
-  const keys = [];
-  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(PREFIX)) keys.push(k); }
+// Estado modal cambio de sala
+let modalTargetDay = null;
+let modalTargetSalaKey = null;
+let modalTargetIdx = null;
+let modalSelectedRoom = null;
+
+// Estado calendario
+let calCurrentDate = new Date();
+let calSelectedDate = null;
+
+function loadDay(key){ try{ const s=localStorage.getItem(key); return s?JSON.parse(s):{}; }catch(e){ return {}; } }
+function persistDay(key,data){ try{ localStorage.setItem(key,JSON.stringify(data)); }catch(e){} }
+function allDayKeys(){
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.startsWith(PREFIX)) keys.push(k); }
   return keys.sort().reverse();
 }
-function fmtDateFromISO(iso) {
-  const d = new Date(iso + 'T12:00:00');
-  return d.toLocaleDateString('es-CL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-}
-function fmtTime(iso) { return new Date(iso).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'}); }
+function fmtDateFromISO(iso){ const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+function fmtTime(iso){ return new Date(iso).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}); }
 
-document.getElementById('today-date').textContent = fmtDateFromISO(new Date().toISOString().slice(0, 10));
-
-function showStep(name) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  document.getElementById('step-' + name).classList.add('active');
-  if (name === 'main') { renderRoomsHoy(); renderHistorial(); }
+// Toast
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-function setTab(t) {
-  document.getElementById('tab-hoy').classList.toggle('active', t === 'hoy');
-  document.getElementById('tab-hist').classList.toggle('active', t === 'hist');
-  document.getElementById('view-hoy').style.display = t === 'hoy' ? 'block' : 'none';
-  document.getElementById('view-hist').style.display = t === 'hist' ? 'block' : 'none';
-  if (t === 'hist') renderHistorial();
+document.getElementById('today-date').textContent = fmtDateFromISO(new Date().toISOString().slice(0,10));
+
+// Inicializar fechas por defecto en los inputs de rango
+const hoyStr = new Date().toISOString().slice(0,10);
+document.getElementById('export-from').value = hoyStr;
+document.getElementById('export-to').value = hoyStr;
+
+function toggleCustomDates(){
+  const period = document.getElementById('export-period').value;
+  document.getElementById('custom-date-inputs').style.display = (period === 'custom') ? 'grid' : 'none';
 }
 
-function renderRoomsHoy() {
-  const data = loadDay(todayKey());
-  const g = document.getElementById('room-grid-hoy');
-  g.innerHTML = '';
-  for (let i = 1; i <= ROOMS; i++) {
-    const records = data['sala_' + i] || [];
-    const b = document.createElement('button');
-    b.className = 'room-btn' + (records.length > 0 ? ' has-records' : '');
-    b.innerHTML = 'Sala ' + i + (records.length > 0 ? `<br><span class="badge">${records.length} reg.</span>` : '');
-    b.onclick = () => openRoom(i);
+function showStep(name){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-'+name).classList.add('active');
+  if(name==='main'){ renderRoomsHoy(); renderExtrasHoy(); renderHistorial(); }
+}
+
+function setTab(t){
+  document.getElementById('tab-hoy').classList.toggle('active',t==='hoy');
+  document.getElementById('tab-hist').classList.toggle('active',t==='hist');
+  document.getElementById('view-hoy').style.display=t==='hoy'?'block':'none';
+  document.getElementById('view-hist').style.display=t==='hist'?'block':'none';
+  if(t==='hist'){ renderCalendar(); renderHistorial(); }
+}
+
+function renderRoomsHoy(){
+  const data=loadDay(todayKey());
+  const g=document.getElementById('room-grid-hoy');
+  g.innerHTML='';
+  for(let i=1; i<=ROOMS; i++){
+    const records=data['sala_'+i]||[];
+    const b=document.createElement('button');
+    b.className='room-btn'+(records.length>0?' has-records':'');
+    b.innerHTML='Sala '+i+(records.length>0?`<br><span class="badge">${records.length} reg.</span>`:'')+(records.length>0?'<span class="edit-hint"><i class="ti ti-pencil"></i></span>':'');
+    b.onclick=()=>openRoom(i, todayKey());
     g.appendChild(b);
   }
 }
-renderRoomsHoy();
 
-function renderHistorial() {
+function renderExtrasHoy(){
+  const data=loadDay(todayKey());
+  const records=data['extras']||[];
+  const g=document.getElementById('extra-grid-hoy');
+  g.innerHTML='';
+  const b=document.createElement('button');
+  b.className='extra-btn'+(records.length>0?' has-records':'');
+  b.innerHTML='<i class="ti ti-users"></i> Extras (Consumo personal)'+(records.length>0?` <span class="badge">${records.length} reg.</span>`:'');
+  b.onclick=()=>openExtra(todayKey());
+  g.appendChild(b);
+}
+
+function renderCalendar(){
+  const wrap = document.getElementById('calendar-wrap');
+  const year = calCurrentDate.getFullYear();
+  const month = calCurrentDate.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Ajuste para que empiece en Lunes
+  const daysInMonth = lastDay.getDate();
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const dayNames = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
   const keys = allDayKeys();
-  const tk = todayKey();
-  const list = document.getElementById('day-list');
-  const noHist = document.getElementById('no-hist');
-  list.innerHTML = '';
-  const todayData = loadDay(tk);
-  const todayRegs = Object.values(todayData).reduce((s, r) => s + (r ? r.length : 0), 0);
-  const todayCard = document.createElement('div');
-  todayCard.className = 'day-card today';
-  todayCard.innerHTML = `<div><div class="day-name">Hoy <span class="today-pill">HOY</span></div><div class="day-meta">${todayRegs} registro${todayRegs !== 1 ? 's' : ''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
-  todayCard.onclick = () => goSummaryDay(tk, false);
+  const daysWithData = new Set();
+  keys.forEach(k => {
+    const d = dateFromKey(k);
+    const dk = new Date(d+'T12:00:00');
+    if(dk.getFullYear() === year && dk.getMonth() === month){
+      daysWithData.add(dk.getDate());
+    }
+  });
+
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+  const todayDate = today.getDate();
+
+  let html = '<div class="cal-header">';
+  html += '<button class="cal-nav-btn" onclick="changeCalMonth(-1)"><i class="ti ti-chevron-left"></i></button>';
+  html += '<span class="cal-month">'+monthNames[month]+' '+year+'</span>';
+  html += '<button class="cal-nav-btn" onclick="changeCalMonth(1)"><i class="ti ti-chevron-right"></i></button>';
+  html += '</div>';
+  html += '<div class="cal-grid">';
+  dayNames.forEach(d => html += '<div class="cal-day-label">'+d+'</div>');
+
+  for(let i = startDay - 1; i >= 0; i--){
+    html += '<div class="cal-day other-month">'+(prevMonthLastDay - i)+'</div>';
+  }
+
+  for(let d = 1; d <= daysInMonth; d++){
+    const isToday = isCurrentMonth && d === todayDate;
+    const hasData = daysWithData.has(d);
+    const isSelected = calSelectedDate && calSelectedDate.getFullYear() === year && calSelectedDate.getMonth() === month && calSelectedDate.getDate() === d;
+    let cls = 'cal-day';
+    if(isToday) cls += ' today';
+    if(hasData) cls += ' has-data';
+    if(isSelected) cls += ' selected';
+    html += '<div class="'+cls+'" onclick="selectCalDate('+year+','+month+','+d+')">'+d+(hasData?'<span class="dot"></span>':'')+'</div>';
+  }
+
+  const totalCells = startDay + daysInMonth;
+  const remainingCells = 42 - totalCells;
+  for(let d = 1; d <= remainingCells; d++){
+    html += '<div class="cal-day other-month">'+d+'</div>';
+  }
+
+  html += '</div>';
+  wrap.innerHTML = html;
+}
+
+function changeCalMonth(delta){
+  calCurrentDate.setMonth(calCurrentDate.getMonth() + delta);
+  renderCalendar();
+}
+
+function selectCalDate(year, month, day){
+  const mm = String(month + 1).padStart(2, '0');
+  const dd = String(day).padStart(2, '0');
+  const key = PREFIX + `${year}-${mm}-${dd}`;
+  calSelectedDate = new Date(year, month, day);
+  renderCalendar();
+  goSummaryDay(key, true);
+}
+
+function renderHistorial(){
+  const keys=allDayKeys();
+  const tk=todayKey();
+  const list=document.getElementById('day-list');
+  const noHist=document.getElementById('no-hist');
+  list.innerHTML='';
+  
+  const todayData=loadDay(tk);
+  const todayRegs=Object.values(todayData).reduce((s,r)=>s+(r?r.length:0),0);
+  const todayCard=document.createElement('div');
+  todayCard.className='day-card today';
+  todayCard.innerHTML=`<div><div class="day-name">Hoy <span class="today-pill">HOY</span></div><div class="day-meta">${todayRegs} registro${todayRegs!==1?'s':''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
+  todayCard.onclick=()=>goSummaryDay(tk,false);
   list.appendChild(todayCard);
-  const hist = keys.filter(k => k !== tk);
-  if (hist.length === 0) { noHist.style.display = 'block'; return; }
-  noHist.style.display = 'none';
-  hist.forEach(k => {
-    const d = loadDay(k);
-    const regs = Object.values(d).reduce((s, r) => s + (r ? r.length : 0), 0);
-    const card = document.createElement('div');
-    card.className = 'day-card';
-    card.innerHTML = `<div><div class="day-name">${fmtDateFromISO(dateFromKey(k))}</div><div class="day-meta">${regs} registro${regs !== 1 ? 's' : ''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
-    card.onclick = () => goSummaryDay(k, true);
+  
+  const hist=keys.filter(k=>k!==tk);
+  if(hist.length===0 && todayRegs===0){ noHist.style.display='block'; } else { noHist.style.display='none'; }
+  
+  hist.forEach(k=>{
+    const d=loadDay(k);
+    const regs=Object.values(d).reduce((s,r)=>s+(r?r.length:0),0);
+    const card=document.createElement('div');
+    card.className='day-card';
+    card.innerHTML=`<div><div class="day-name">${fmtDateFromISO(dateFromKey(k))}</div><div class="day-meta">${regs} registro${regs!==1?'s':''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
+    card.onclick=()=>goSummaryDay(k,true);
     list.appendChild(card);
   });
 }
 
-function openRoom(n) {
-  currentRoom = n;
-  tempQty = {};
-  PRODUCTS.forEach(p => { tempQty[p.id] = 0; });
-  const data = loadDay(todayKey());
-  const prev = (data['sala_' + n] || []).length;
-  document.getElementById('prod-label').textContent = 'Sala ' + n + ' — Nuevo registro';
-  document.getElementById('room-prev-info').textContent = prev === 0
-    ? 'Primer registro del día para esta sala.'
-    : `Esta sala ya tiene ${prev} registro${prev > 1 ? 's' : ''} hoy. Este será uno nuevo e independiente.`;
+function openRoom(n, targetDayKey){
+  currentRoom=n;
+  isExtra=false;
+  editingDay=targetDayKey;
+  editingRecordIdx=null;
+  tempQty={};
+  PRODUCTS.forEach(p=>{ tempQty[p.id]=0; });
+  const data=loadDay(targetDayKey);
+  const prev=(data['sala_'+n]||[]).length;
+  document.getElementById('prod-label').textContent='Sala '+n+' — Nuevo registro';
+  document.getElementById('room-prev-info').textContent=prev===0
+    ?'Primer registro del día para esta sala.'
+    :`Esta sala ya tiene ${prev} registro${prev>1?'s':''}. Este será uno nuevo e independiente.`;
+  document.getElementById('edit-badge-wrap').innerHTML='';
+  document.getElementById('save-btn-label').textContent='Guardar registro';
   renderProducts();
   showStep('products');
 }
 
-function renderProducts() {
-  const l = document.getElementById('product-list');
-  l.innerHTML = '';
-  PRODUCTS.forEach(p => {
-    const row = document.createElement('div');
-    row.className = 'product-row';
-    row.innerHTML = `<span class="product-emoji">${p.emoji}</span>
+function openExtra(targetDayKey){
+  currentRoom=null;
+  isExtra=true;
+  editingDay=targetDayKey;
+  editingRecordIdx=null;
+  tempQty={};
+  PRODUCTS.forEach(p=>{ tempQty[p.id]=0; });
+  const data=loadDay(targetDayKey);
+  const prev=(data['extras']||[]).length;
+  document.getElementById('prod-label').textContent='Extras — Consumo del personal';
+  document.getElementById('room-prev-info').textContent=prev===0
+    ?'Primer registro de extras del día.'
+    :`Ya hay ${prev} registro${prev>1?'s':''} de extras. Este será uno nuevo e independiente.`;
+  document.getElementById('edit-badge-wrap').innerHTML='';
+  document.getElementById('save-btn-label').textContent='Guardar registro';
+  renderProducts();
+  showStep('products');
+}
+
+// Métodos para agregar directo desde la vista del Historial
+function openRoomFromHistory(){
+  const grid = document.getElementById('history-room-grid');
+  grid.innerHTML = '';
+  for(let i=1; i<=ROOMS; i++){
+     const btn = document.createElement('button');
+     btn.className = 'room-select-btn';
+     btn.textContent = 'Sala ' + i;
+     btn.onclick = () => {
+         document.getElementById('modal-add-history-room').style.display = 'none';
+         openRoom(i, viewingDay);
+     };
+     grid.appendChild(btn);
+  }
+  document.getElementById('modal-add-history-room').style.display = 'flex';
+}
+
+function openExtraFromHistory(){
+  openExtra(viewingDay);
+}
+
+function editRecord(dayKey, salaKey, idx){
+  const data=loadDay(dayKey);
+  const record=data[salaKey][idx];
+  isExtra = (salaKey === 'extras');
+  currentRoom = isExtra ? null : parseInt(salaKey.replace('sala_',''));
+  editingDay=dayKey;
+  editingRecordIdx=idx;
+  tempQty={...record.productos};
+  PRODUCTS.forEach(p=>{ if(tempQty[p.id]===undefined) tempQty[p.id]=0; });
+  if(isExtra){
+    document.getElementById('prod-label').textContent='Extras — Editando registro';
+  } else {
+    document.getElementById('prod-label').textContent='Sala '+currentRoom+' — Editando registro';
+  }
+  document.getElementById('room-prev-info').textContent='Modifica las cantidades y guarda. El horario original se conserva.';
+  document.getElementById('edit-badge-wrap').innerHTML='<div class="edit-badge"><i class="ti ti-pencil" style="font-size:13px"></i> Editando registro de las '+fmtTime(record.ts)+'</div>';
+  document.getElementById('save-btn-label').textContent='Guardar cambios';
+  renderProducts();
+  showStep('products');
+}
+
+function renderProducts(){
+  const l=document.getElementById('product-list');
+  l.innerHTML='';
+  PRODUCTS.forEach(p=>{
+    const row=document.createElement('div');
+    row.className='product-row';
+    row.innerHTML=`<span class="product-emoji">${p.emoji}</span>
       <span class="product-name">${p.name}</span>
       <div class="qty-controls">
         <button class="qty-btn" onclick="chg('${p.id}',-1)"><i class="ti ti-minus"></i></button>
-        <span class="qty-num" id="q-${p.id}">0</span>
+        <span class="qty-num" id="q-${p.id}">${tempQty[p.id]||0}</span>
         <button class="qty-btn" onclick="chg('${p.id}',1)"><i class="ti ti-plus"></i></button>
       </div>`;
     l.appendChild(row);
   });
 }
 
-function chg(id, delta) {
-  tempQty[id] = Math.max(0, (tempQty[id] || 0) + delta);
-  const el = document.getElementById('q-' + id);
-  if (el) el.textContent = tempQty[id];
+function chg(id,delta){
+  tempQty[id]=Math.max(0,(tempQty[id]||0)+delta);
+  const el=document.getElementById('q-'+id);
+  if(el) el.textContent=tempQty[id];
 }
 
-function saveRoom() {
-  const hasAny = Object.values(tempQty).some(v => v > 0);
-  if (!hasAny) { alert('Agrega al menos un producto antes de guardar.'); return; }
-  const data = loadDay(todayKey());
-  const key = 'sala_' + currentRoom;
-  if (!data[key]) data[key] = [];
-  data[key].push({ ts: new Date().toISOString(), productos: { ...tempQty } });
-  persistDay(todayKey(), data);
-  showStep('main');
+function saveRoom(){
+  const hasAny=Object.values(tempQty).some(v=>v>0);
+  if(!hasAny){ alert('Agrega al menos un producto antes de guardar.'); return; }
+  const data=loadDay(editingDay);
+  const key = isExtra ? 'extras' : 'sala_'+currentRoom;
+  if(!data[key]) data[key]=[];
+
+  if(editingRecordIdx!==null){
+    const originalTs=data[key][editingRecordIdx].ts;
+    data[key][editingRecordIdx]={ ts:originalTs, productos:{...tempQty} };
+    showToast('✅ Registro actualizado');
+  } else {
+    // Si agregas a un día pasado, simula la hora actual pero apuntando a la fecha destino
+    const dRef = new Date();
+    const isoFecha = dateFromKey(editingDay); // YYYY-MM-DD
+    const finalTs = `${isoFecha}T${String(dRef.getHours()).padStart(2,'0')}:${String(dRef.getMinutes()).padStart(2,'0')}:${String(dRef.getSeconds()).padStart(2,'0')}.000Z`;
+    data[key].push({ ts:finalTs, productos:{...tempQty} });
+    showToast('✅ Registro guardado');
+  }
+  persistDay(editingDay,data);
+
+  if(viewingDay){
+    renderSummaryForDay(viewingDay);
+    showStep('summary');
+  } else {
+    showStep('main');
+  }
 }
 
-function goSummaryDay(dayKey, fromHist) {
-  viewingDay = dayKey;
-  comingFromHist = fromHist || false;
-  const isToday = dayKey === todayKey();
-  document.getElementById('summary-title').textContent = isToday ? 'Resumen de hoy' : 'Resumen — ' + fmtDateFromISO(dateFromKey(dayKey));
-  document.getElementById('back-label').textContent = comingFromHist ? 'Historial' : 'Salas';
-  document.getElementById('readonly-indicator').innerHTML = isToday ? '' :
-    '<div class="readonly-badge"><i class="ti ti-lock" style="font-size:13px"></i> Día anterior — solo lectura</div>';
-  document.getElementById('btn-clear').style.display = isToday ? 'block' : 'none';
+function cancelEdit(){
+  if(viewingDay){
+    showStep('summary');
+  } else {
+    showStep('main');
+  }
+}
+
+function deleteRecord(dayKey, salaKey, idx){
+  if(!confirm('¿Eliminar este registro?')) return;
+  const data=loadDay(dayKey);
+  data[salaKey].splice(idx,1);
+  if(data[salaKey].length===0) delete data[salaKey];
+  persistDay(dayKey,data);
+  showToast('🗑️ Registro eliminado');
+  renderSummaryForDay(dayKey);
+}
+
+// ========== CAMBIAR SALA DE UN REGISTRO ==========
+function openChangeRoomModal(dayKey, salaKey, idx){
+  modalTargetDay = dayKey;
+  modalTargetSalaKey = salaKey;
+  modalTargetIdx = idx;
+  modalSelectedRoom = null;
+  const current = parseInt(salaKey.replace('sala_',''));
+  const grid = document.getElementById('room-select-grid');
+  grid.innerHTML = '';
+  for(let i=1;i<=ROOMS;i++){
+    const btn = document.createElement('button');
+    btn.className = 'room-select-btn' + (i===current?' selected':'');
+    btn.textContent = 'Sala ' + i;
+    btn.onclick = () => {
+      modalSelectedRoom = i;
+      document.querySelectorAll('.room-select-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+    };
+    grid.appendChild(btn);
+  }
+  document.getElementById('modal-room').style.display = 'flex';
+}
+
+function closeRoomModal(){
+  document.getElementById('modal-room').style.display = 'none';
+}
+
+function confirmChangeRoom(){
+  if(!modalSelectedRoom){
+    showToast('⚠️ Selecciona una sala');
+    return;
+  }
+  const newKey = 'sala_' + modalSelectedRoom;
+  const data = loadDay(modalTargetDay);
+  const record = data[modalTargetSalaKey][modalTargetIdx];
+
+  data[modalTargetSalaKey].splice(modalTargetIdx, 1);
+  if(data[modalTargetSalaKey].length === 0) delete data[modalTargetSalaKey];
+
+  if(!data[newKey]) data[newKey] = [];
+  data[newKey].push({ ts: record.ts, productos: {...record.productos} });
+
+  persistDay(modalTargetDay, data);
+  showToast('✅ Sala cambiada a Sala ' + modalSelectedRoom);
+  closeRoomModal();
+  renderSummaryForDay(modalTargetDay);
+}
+
+function goSummaryDay(dayKey,fromHist){
+  viewingDay=dayKey;
+  comingFromHist=fromHist||false;
+  const isToday=dayKey===todayKey();
+  document.getElementById('summary-title').textContent=isToday?'Resumen de hoy':'Resumen — '+fmtDateFromISO(dateFromKey(dayKey));
+  document.getElementById('back-label').textContent=comingFromHist?'Historial':'Salas';
+  
+  // Ahora el badge indica explícitamente que es editable.
+  document.getElementById('readonly-indicator').innerHTML=isToday?'':
+    '<div class="readonly-badge"><i class="ti ti-edit" style="font-size:13px"></i> Historial Pasado — Modo Edición Habilitado</div>';
+  
+  document.getElementById('btn-clear').style.display='block'; // Permitir limpiar cualquier día
   renderSummaryForDay(dayKey);
   showStep('summary');
 }
 
-function backFromSummary() {
+function backFromSummary(){
+  viewingDay=null;
   showStep('main');
-  if (comingFromHist) setTab('hist');
+  if(comingFromHist) setTab('hist');
 }
 
-function renderSummaryForDay(dayKey) {
-  const data = loadDay(dayKey);
-  const allRecords = [];
-  let totalUnidades = 0, totalRegistros = 0;
-  for (let i = 1; i <= ROOMS; i++) {
-    (data['sala_' + i] || []).forEach(r => {
+function renderSummaryForDay(dayKey){
+  const data=loadDay(dayKey);
+  const allRecords=[];
+  let totalUnidades=0,totalRegistros=0;
+
+  for(let i=1;i<=ROOMS;i++){
+    (data['sala_'+i]||[]).forEach((r,idx)=>{
       totalRegistros++;
-      const total = PRODUCTS.reduce((s, p) => s + (r.productos[p.id] || 0), 0);
-      totalUnidades += total;
-      allRecords.push({ sala: i, ts: r.ts, productos: r.productos });
+      const total=PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
+      totalUnidades+=total;
+      allRecords.push({sala:i, salaKey:'sala_'+i, idx, ts:r.ts, productos:r.productos, total, isExtra:false});
     });
   }
-  document.getElementById('stats-bar').innerHTML = `
+  (data['extras']||[]).forEach((r,idx)=>{
+    totalRegistros++;
+    const total=PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
+    totalUnidades+=total;
+    allRecords.push({sala:null, salaKey:'extras', idx, ts:r.ts, productos:r.productos, total, isExtra:true});
+  });
+
+  document.getElementById('stats-bar').innerHTML=`
     <div class="stat"><div class="stat-label">Registros</div><div class="stat-val">${totalRegistros}</div></div>
     <div class="stat"><div class="stat-label">Unidades totales</div><div class="stat-val">${totalUnidades}</div></div>`;
-  if (allRecords.length === 0) {
-    document.getElementById('summary-list').innerHTML = '<div class="empty-state"><i class="ti ti-mood-empty"></i>Sin registros.</div>';
+  
+  if(allRecords.length===0){
+    document.getElementById('summary-list').innerHTML='<div class="empty-state"><i class="ti ti-mood-empty"></i>Sin registros en este día. ¡Puedes agregarlos con los botones de arriba!</div>';
     return;
   }
-  allRecords.sort((a, b) => a.sala - b.sala || a.ts.localeCompare(b.ts));
-  let html = '';
-  allRecords.forEach(r => {
-    const items = PRODUCTS.filter(p => (r.productos[p.id] || 0) > 0);
-    html += `<div class="summary-card"><div class="summary-header">
-      <span class="summary-room">Sala ${r.sala}</span>
-      <span class="summary-time"><i class="ti ti-clock"></i> ${fmtTime(r.ts)}</span>
-    </div>`;
-    items.forEach(p => {
-      html += `<div class="summary-row"><span>${p.emoji} ${p.name}</span><span>${r.productos[p.id]}</span></div>`;
-    });
-    html += '</div>';
+  
+  allRecords.sort((a,b)=>{
+    if(a.isExtra && !b.isExtra) return 1;
+    if(!a.isExtra && b.isExtra) return -1;
+    if(a.isExtra && b.isExtra) return a.ts.localeCompare(b.ts);
+    return a.sala-b.sala||a.ts.localeCompare(b.ts);
   });
-  document.getElementById('summary-list').innerHTML = html;
+  
+  let html='';
+  allRecords.forEach(r=>{
+    const items=PRODUCTS.filter(p=>(r.productos[p.id]||0)>0);
+    // Habilitado para HOY y DÍAS ANTERIORES por igual:
+    const actionsHtml=`
+      <div class="record-actions">
+        <button class="action-btn edit" title="Editar" onclick="editRecord('${dayKey}','${r.salaKey}',${r.idx})"><i class="ti ti-pencil"></i></button>
+        ${!r.isExtra?`<button class="action-btn edit" title="Cambiar sala" onclick="openChangeRoomModal('${dayKey}','${r.salaKey}',${r.idx})" style="color:var(--accent);border-color:var(--accent);"><i class="ti ti-door"></i></button>`:''}
+        <button class="action-btn del" title="Eliminar" onclick="deleteRecord('${dayKey}','${r.salaKey}',${r.idx})"><i class="ti ti-trash"></i></button>
+      </div>`;
+    const roomLabel = r.isExtra ? '<span style="color:var(--extra)"><i class="ti ti-users"></i> Extras</span>' : 'Sala '+r.sala;
+    html+=`<div class="record-card">
+      <div class="record-header">
+        <span class="record-room">${roomLabel}</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="record-time"><i class="ti ti-clock"></i> ${fmtTime(r.ts)}</span>
+          ${actionsHtml}
+        </div>
+      </div>`;
+    items.forEach(p=>{
+      html+=`<div class="record-row"><span>${p.emoji} ${p.name}</span><span>${r.productos[p.id]}</span></div>`;
+    });
+    html+=`<div class="record-row" style="background:var(--surface2);font-weight:600;"><span>Total registro</span><span>${r.total}</span></div>`;
+    html+='</div>';
+  });
+  document.getElementById('summary-list').innerHTML=html;
 }
 
 // ============================================================
-// EXPORTAR EXCEL CON FORMATO VISUAL
+// LÓGICA DE EXPORTACIÓN Y AGRUPACIÓN POR RANGOS DE FECHAS
 // ============================================================
-function styleCell(ws, cellRef, opts) {
-  if (!ws[cellRef]) return;
-  ws[cellRef].s = opts;
-}
+function getDatesByPeriod() {
+  const period = document.getElementById('export-period').value;
+  const list = [];
+  const hoy = new Date();
 
-function applyRangeStyle(ws, range, style) {
-  const r = XLSX.utils.decode_range(range);
-  for (let R = r.s.r; R <= r.e.r; R++) {
-    for (let C = r.s.c; C <= r.e.c; C++) {
-      const ref = XLSX.utils.encode_cell({r: R, c: C});
-      if (!ws[ref]) ws[ref] = {v: '', t: 's'};
-      ws[ref].s = style;
+  if (period === 'day') {
+    list.push(viewingDay ? dateFromKey(viewingDay) : hoy.toISOString().slice(0,10));
+  } 
+  else if (period === 'week') {
+    // Calcular el lunes de la semana actual
+    const currentDay = hoy.getDay();
+    const distanciaLunes = currentDay === 0 ? -6 : 1 - currentDay;
+    const lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() + distanciaLunes);
+    
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(lunes);
+      d.setDate(lunes.getDate() + i);
+      list.push(d.toISOString().slice(0,10));
+    }
+  } 
+  else if (period === 'month') {
+    const año = hoy.getFullYear();
+    const mes = hoy.getMonth();
+    const ultimoDia = new Date(año, mes + 1, 0).getDate();
+    for (let d = 1; d <= ultimoDia; d++) {
+      const mm = String(mes + 1).padStart(2, '0');
+      const dd = String(d).padStart(2, '0');
+      list.push(`${año}-${mm}-${dd}`);
+    }
+  } 
+  else if (period === 'custom') {
+    const desdeStr = document.getElementById('export-from').value;
+    const hastaStr = document.getElementById('export-to').value;
+    if (!desdeStr || !hastaStr) return [];
+    
+    const dIni = new Date(desdeStr + 'T12:00:00');
+    const dFin = new Date(hastaStr + 'T12:00:00');
+    
+    let t = new Date(dIni);
+    while (t <= dFin) {
+      list.push(t.toISOString().slice(0,10));
+      t.setDate(t.getDate() + 1);
     }
   }
+  return list;
 }
 
-function exportExcel() {
-  const data = loadDay(viewingDay);
-  const dateStr = dateFromKey(viewingDay);
-  const dateLabel = fmtDateFromISO(dateStr);
-  const wb = XLSX.utils.book_new();
+function exportBulkExcel() {
+  const fechas = getDatesByPeriod();
+  if (fechas.length === 0) {
+    showToast('⚠️ Configura correctamente las fechas de rango.');
+    return;
+  }
+  
+  // Consolidar todos los datos estructurados en memoria de los días elegidos
+  const datosConsolidados = {};
+  let totalRegistrosEncontrados = 0;
+  
+  fechas.forEach(f => {
+    const k = PREFIX + f;
+    const d = loadDay(k);
+    const conteo = Object.values(d).reduce((s,r)=>s+(r?r.length:0),0);
+    if (conteo > 0) {
+      datosConsolidados[f] = d;
+      totalRegistrosEncontrados += conteo;
+    }
+  });
 
-  // Colores cafetería
-  const COLOR_CAFE      = 'B5652A'; // café — encabezados principales
-  const COLOR_CAFE_MID  = 'D4956A'; // café medio — subencabezados
-  const COLOR_CAFE_LIGHT= 'F5EDD8'; // crema — filas alternas
-  const COLOR_WHITE     = 'FFFFFF';
-  const COLOR_TOTAL_BG  = '1C0F07'; // café oscuro — fila totales
-  const COLOR_TOTAL_FG  = 'F5EDD8';
-  const COLOR_ZERO      = 'CCCCCC'; // gris para ceros
+  if (totalRegistrosEncontrados === 0) {
+    showToast('❌ No se encontraron datos para exportar en el periodo seleccionado.');
+    return;
+  }
 
-  const borderThin = {
-    top:    {style:'thin', color:{rgb:'D4956A'}},
-    bottom: {style:'thin', color:{rgb:'D4956A'}},
-    left:   {style:'thin', color:{rgb:'D4956A'}},
-    right:  {style:'thin', color:{rgb:'D4956A'}},
-  };
-  const borderMed = {
-    top:    {style:'medium', color:{rgb:'B5652A'}},
-    bottom: {style:'medium', color:{rgb:'B5652A'}},
-    left:   {style:'medium', color:{rgb:'B5652A'}},
-    right:  {style:'medium', color:{rgb:'B5652A'}},
-  };
+  generarDocumentoExcel(datosConsolidados, `Reporte_Consolidado_${fechas[0]}_a_${fechas[fechas.length-1]}`);
+}
 
-  // ── HOJA 1: Detalle completo ──────────────────────────────
-  const hdr = ['Sala', 'Hora', ...PRODUCTS.map(p => p.name), 'Total'];
-  const rows = [];
+function exportExcel(){
+  const d = {};
+  const f = dateFromKey(viewingDay);
+  d[f] = loadDay(viewingDay);
+  generarDocumentoExcel(d, `Bebestibles_${f}`);
+}
 
-  // Fila título
-  rows.push([`Reporte de Bebestibles — ${dateLabel}`]);
-  rows.push([]); // espacio
-  rows.push(hdr);
+// Inyección y construcción estricta del Excel estructurado original basado en el mapa dinámico multi-fecha
+function generarDocumentoExcel(datosAgrupados, nombreArchivo){
+  const wb=XLSX.utils.book_new();
 
-  const dataRows = [];
-  const totalsArr = new Array(PRODUCTS.length).fill(0);
-  let grandTotal = 0;
+  const C_CAFE       ='B5652A';
+  const C_CAFE_MID   ='D4956A';
+  const C_CAFE_LIGHT ='F9F0E6';
+  const C_WHITE      ='FFFFFF';
+  const C_DARK       ='1C0F07';
+  const C_DARK_FG    ='F5EDD8';
+  const C_ZERO       ='CCCCCC';
+  const C_HIGHLIGHT  ='FFF3E8';
+  const C_GREEN      ='1E7C45';
+  const C_RED        ='C0392B';
+  const C_BLUE       ='2E86AB';
+  const C_PURPLE     ='6B4C7A';
+  const C_ORANGE     ='E67E22';
+  const C_EXTRA      ='2E86AB';
+  const C_EXTRA_BG   ='EBF5FB';
 
-  for (let i = 1; i <= ROOMS; i++) {
-    (data['sala_' + i] || []).forEach(r => {
-      const row = ['Sala ' + i, fmtTime(r.ts)];
-      let rt = 0;
-      PRODUCTS.forEach((p, idx) => {
-        const v = r.productos[p.id] || 0;
-        row.push(v);
-        totalsArr[idx] += v;
-        rt += v;
+  const bThin={top:{style:'thin',color:{rgb:C_CAFE_MID}},bottom:{style:'thin',color:{rgb:C_CAFE_MID}},left:{style:'thin',color:{rgb:C_CAFE_MID}},right:{style:'thin',color:{rgb:C_CAFE_MID}}};
+  const bMed ={top:{style:'medium',color:{rgb:C_CAFE}},bottom:{style:'medium',color:{rgb:C_CAFE}},left:{style:'medium',color:{rgb:C_CAFE}},right:{style:'medium',color:{rgb:C_CAFE}}};
+  const bThick={top:{style:'thick',color:{rgb:C_CAFE}},bottom:{style:'thick',color:{rgb:C_CAFE}},left:{style:'thick',color:{rgb:C_CAFE}},right:{style:'thick',color:{rgb:C_CAFE}}};
+
+  function cs(ws,r,c,style){
+    const ref=XLSX.utils.encode_cell({r,c});
+    if(!ws[ref]) ws[ref]={v:'',t:'s'};
+    ws[ref].s=style;
+  }
+
+  // ── HOJA 1: Detalle Completo Multi-Día ───────────────────
+  const allRecords=[];
+  const totArr=new Array(PRODUCTS.length).fill(0);
+  let grandTotal=0;
+
+  Object.keys(datosAgrupados).sort().forEach(fStr => {
+    const data = datosAgrupados[fStr];
+    const dLabel = fmtDateFromISO(fStr);
+
+    for(let i=1;i<=ROOMS;i++){
+      (data['sala_'+i]||[]).forEach(r=>{
+        let rt=0;
+        const row=[fStr, 'Sala '+i, fmtTime(r.ts)];
+        PRODUCTS.forEach((p,idx)=>{ const v=r.productos[p.id]||0; row.push(v); totArr[idx]+=v; rt+=v; });
+        row.push(rt);
+        grandTotal+=rt;
+        allRecords.push({type:'sala', row, fStr});
       });
+    }
+    (data['extras']||[]).forEach(r=>{
+      let rt=0;
+      const row=[fStr, 'Extras', fmtTime(r.ts)];
+      PRODUCTS.forEach((p,idx)=>{ const v=r.productos[p.id]||0; row.push(v); totArr[idx]+=v; rt+=v; });
       row.push(rt);
-      grandTotal += rt;
-      dataRows.push(row);
+      grandTotal+=rt;
+      allRecords.push({type:'extra', row, fStr});
     });
-  }
+  });
 
-  dataRows.forEach(r => rows.push(r));
-  rows.push([]); // espacio
-  rows.push(['TOTAL GENERAL', '', ...totalsArr, grandTotal]);
+  // Ordenar por fecha, luego tipo y sala
+  allRecords.sort((a,b)=>{
+    if (a.fStr !== b.fStr) return a.fStr.localeCompare(b.fStr);
+    if(a.type==='extra' && b.type!=='extra') return 1;
+    if(a.type!=='extra' && b.type==='extra') return -1;
+    const na=parseInt(a.row[1].replace('Sala ','')) || 0; 
+    const nb=parseInt(b.row[1].replace('Sala ','')) || 0;
+    return na-nb||a.row[2].localeCompare(b.row[2]);
+  });
 
-  const ws1 = XLSX.utils.aoa_to_sheet(rows);
+  const hdr=['Fecha','Sala / Extras','Hora',...PRODUCTS.map(p=>p.name),'Total'];
+  const totalCols=hdr.length;
 
-  // Anchos de columna
-  ws1['!cols'] = [
-    {wch: 12}, {wch: 8},
-    ...PRODUCTS.map(() => ({wch: 20})),
-    {wch: 12}
-  ];
+  const sheetRows=[];
+  sheetRows.push([`Reporte Consolidado de Bebestibles`]);
+  sheetRows.push([]);
+  sheetRows.push(hdr);
+  allRecords.forEach(r=>sheetRows.push(r.row));
+  sheetRows.push([]);
+  sheetRows.push(['TOTAL GENERAL','','',...totArr,grandTotal]);
 
-  // Fila 1 título (merge)
-  const totalCols = 2 + PRODUCTS.length + 1;
-  ws1['!merges'] = [
-    {s:{r:0,c:0}, e:{r:0,c:totalCols-1}}
-  ];
+  const ws1=XLSX.utils.aoa_to_sheet(sheetRows);
+  ws1['!cols']=[{wch:14},{wch:16},{wch:10},...PRODUCTS.map(()=>({wch:22})),{wch:14}];
+  ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:totalCols-1}}];
+  ws1['!rows']=[{hpt:38},{hpt:8},{hpt:40}];
+  for(let i=0;i<allRecords.length;i++) ws1['!rows'].push({hpt:24});
 
-  // Estilo fila título (row 0)
-  for (let c = 0; c < totalCols; c++) {
-    const ref = XLSX.utils.encode_cell({r:0, c});
-    if (!ws1[ref]) ws1[ref] = {v:'', t:'s'};
-    ws1[ref].s = {
-      font: {bold:true, sz:14, color:{rgb:COLOR_WHITE}, name:'Arial'},
-      fill: {fgColor:{rgb:COLOR_CAFE}},
-      alignment: {horizontal:'center', vertical:'center'},
-    };
-  }
+  for(let c=0;c<totalCols;c++) cs(ws1,0,c,{font:{bold:true,sz:16,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'}});
+  for(let c=0;c<totalCols;c++) cs(ws1,2,c,{font:{bold:true,sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:bMed});
 
-  // Estilo encabezado (row 2)
-  for (let c = 0; c < totalCols; c++) {
-    const ref = XLSX.utils.encode_cell({r:2, c});
-    if (!ws1[ref]) ws1[ref] = {v:'', t:'s'};
-    ws1[ref].s = {
-      font: {bold:true, sz:11, color:{rgb:COLOR_WHITE}, name:'Arial'},
-      fill: {fgColor:{rgb:COLOR_CAFE}},
-      alignment: {horizontal:'center', vertical:'center', wrapText:true},
-      border: borderMed,
-    };
-  }
-
-  // Estilo filas de datos (row 3 en adelante)
-  dataRows.forEach((row, idx) => {
-    const excelRow = 3 + idx;
-    const isEven = idx % 2 === 0;
-    const bgColor = isEven ? COLOR_WHITE : COLOR_CAFE_LIGHT;
-    for (let c = 0; c < totalCols; c++) {
-      const ref = XLSX.utils.encode_cell({r: excelRow, c});
-      if (!ws1[ref]) ws1[ref] = {v: 0, t: 'n'};
-      const isZero = c >= 2 && c < totalCols - 1 && ws1[ref].v === 0;
-      ws1[ref].s = {
-        font: {
-          sz: 11, name: 'Arial',
-          color: {rgb: isZero ? COLOR_ZERO : '1C0F07'},
-          bold: c === totalCols - 1,
-        },
-        fill: {fgColor: {rgb: bgColor}},
-        alignment: {horizontal: c >= 2 ? 'center' : 'left', vertical:'center'},
-        border: borderThin,
+  allRecords.forEach((rec,idx)=>{
+    const er=3+idx; const isEven=idx%2===0; const bg=isEven?C_WHITE:C_CAFE_LIGHT;
+    const isExtraRow = rec.type === 'extra';
+    for(let c=0;c<totalCols;c++){
+      const ref=XLSX.utils.encode_cell({r:er,c});
+      if(!ws1[ref]) ws1[ref]={v:0,t:'n'};
+      const v=ws1[ref].v;
+      const isZero=(c>=3&&c<totalCols-1&&v===0);
+      const isTotal=(c===totalCols-1);
+      const isSalaOrDate=(c===0||c===1);
+      ws1[ref].s={
+        font:{sz:11,name:'Calibri',color:{rgb:isZero?C_ZERO:isTotal?C_CAFE:isExtraRow?C_EXTRA:C_DARK},bold:isTotal||isSalaOrDate},
+        fill:{fgColor:{rgb:isExtraRow?C_EXTRA_BG:(isTotal?C_HIGHLIGHT:bg)}},
+        alignment:{horizontal:c<3?'left':'center',vertical:'center'},
+        border:bThin
       };
     }
   });
 
-  // Fila TOTAL GENERAL
-  const totalRow = 3 + dataRows.length + 1;
-  for (let c = 0; c < totalCols; c++) {
-    const ref = XLSX.utils.encode_cell({r: totalRow, c});
-    if (!ws1[ref]) ws1[ref] = {v: c < 2 ? '' : 0, t: c < 2 ? 's' : 'n'};
-    ws1[ref].s = {
-      font: {bold:true, sz:12, color:{rgb:COLOR_TOTAL_FG}, name:'Arial'},
-      fill: {fgColor:{rgb:COLOR_TOTAL_BG}},
-      alignment: {horizontal: c >= 2 ? 'center' : 'left', vertical:'center'},
-      border: borderMed,
-    };
+  const totRow1=3+allRecords.length+1;
+  for(let c=0;c<totalCols;c++){
+    const ref=XLSX.utils.encode_cell({r:totRow1,c});
+    if(!ws1[ref]) ws1[ref]={v:c<3?'':0,t:c<3?'s':'n'};
+    ws1[ref].s={font:{bold:true,sz:12,color:{rgb:C_DARK_FG},name:'Calibri'},fill:{fgColor:{rgb:C_DARK}},alignment:{horizontal:c<3?'left':'center',vertical:'center'},border:bThick};
   }
+  XLSX.utils.book_append_sheet(wb,ws1,'Detalle');
 
-  // Altura de filas
-  ws1['!rows'] = [];
-  ws1['!rows'][0] = {hpt: 30};
-  ws1['!rows'][2] = {hpt: 36};
-  for (let i = 0; i < dataRows.length; i++) ws1['!rows'][3 + i] = {hpt: 22};
-  ws1['!rows'][totalRow] = {hpt: 28};
-
-  XLSX.utils.book_append_sheet(wb, ws1, 'Detalle');
-
-  // ── HOJA 2: Resumen por producto ─────────────────────────
-  const g = {};
-  PRODUCTS.forEach(p => g[p.id] = 0);
-  for (let i = 1; i <= ROOMS; i++) {
-    (data['sala_' + i] || []).forEach(r => {
-      PRODUCTS.forEach(p => { g[p.id] += (r.productos[p.id] || 0); });
-    });
-  }
-  const totalGlobal = Object.values(g).reduce((s,v)=>s+v,0);
-
-  const sumRows = [];
-  sumRows.push(['Resumen por Producto']);
-  sumRows.push([dateLabel]);
-  sumRows.push([]);
-  sumRows.push(['Producto', 'Total unidades', '% del total']);
-  PRODUCTS.forEach(p => {
-    const pct = totalGlobal > 0 ? ((g[p.id] / totalGlobal) * 100).toFixed(1) + '%' : '0%';
-    sumRows.push([p.name, g[p.id], pct]);
+  // ── HOJA 2: Resumen Acumulado por Producto ───────────────
+  const g={}; PRODUCTS.forEach(p=>g[p.id]=0);
+  Object.values(datosAgrupados).forEach(data => {
+    for(let i=1;i<=ROOMS;i++) (data['sala_'+i]||[]).forEach(r=>PRODUCTS.forEach(p=>{g[p.id]+=(r.productos[p.id]||0);}));
+    (data['extras']||[]).forEach(r=>PRODUCTS.forEach(p=>{g[p.id]+=(r.productos[p.id]||0);}));
   });
-  sumRows.push([]);
-  sumRows.push(['TOTAL', totalGlobal, '100%']);
+  const totalGlobal=Object.values(g).reduce((s,v)=>s+v,0);
 
-  const ws2 = XLSX.utils.aoa_to_sheet(sumRows);
-  ws2['!cols'] = [{wch:24}, {wch:16}, {wch:14}];
-  ws2['!merges'] = [
-    {s:{r:0,c:0}, e:{r:0,c:2}},
-    {s:{r:1,c:0}, e:{r:1,c:2}},
-  ];
-
-  // Título hoja 2
-  for (let c = 0; c < 3; c++) {
-    const ref = XLSX.utils.encode_cell({r:0,c});
-    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
-    ws2[ref].s = { font:{bold:true,sz:14,color:{rgb:COLOR_WHITE},name:'Arial'}, fill:{fgColor:{rgb:COLOR_CAFE}}, alignment:{horizontal:'center'} };
-  }
-  for (let c = 0; c < 3; c++) {
-    const ref = XLSX.utils.encode_cell({r:1,c});
-    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
-    ws2[ref].s = { font:{sz:11,color:{rgb:COLOR_WHITE},name:'Arial'}, fill:{fgColor:{rgb:COLOR_CAFE_MID}}, alignment:{horizontal:'center'} };
-  }
-  // Encabezado col
-  for (let c = 0; c < 3; c++) {
-    const ref = XLSX.utils.encode_cell({r:3,c});
-    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
-    ws2[ref].s = { font:{bold:true,sz:11,color:{rgb:COLOR_WHITE},name:'Arial'}, fill:{fgColor:{rgb:COLOR_CAFE}}, alignment:{horizontal:'center'}, border:borderMed };
-  }
-  // Filas de productos
-  PRODUCTS.forEach((p, idx) => {
-    const excelRow = 4 + idx;
-    const bg = idx % 2 === 0 ? COLOR_WHITE : COLOR_CAFE_LIGHT;
-    for (let c = 0; c < 3; c++) {
-      const ref = XLSX.utils.encode_cell({r:excelRow,c});
-      if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
-      const isZero = c === 1 && ws2[ref].v === 0;
-      ws2[ref].s = {
-        font:{sz:11,name:'Arial',color:{rgb: isZero ? COLOR_ZERO : '1C0F07'}},
-        fill:{fgColor:{rgb:bg}},
-        alignment:{horizontal: c===0?'left':'center'},
-        border:borderThin
-      };
-    }
+  const pRows=[];
+  pRows.push(['Resumen Consolidado por Producto']);
+  pRows.push([`Periodo Procesado`]);
+  pRows.push([]);
+  pRows.push(['Producto','Total unidades','% del total']);
+  const sortedProds=[...PRODUCTS].sort((a,b)=>g[b.id]-g[a.id]);
+  sortedProds.forEach(p=>{
+    const pct=totalGlobal>0?((g[p.id]/totalGlobal)*100).toFixed(1)+'%':'0%';
+    pRows.push([p.name, g[p.id], pct]);
   });
-  // Fila total hoja 2
-  const totRow2 = 4 + PRODUCTS.length + 1;
-  for (let c = 0; c < 3; c++) {
-    const ref = XLSX.utils.encode_cell({r:totRow2,c});
-    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
-    ws2[ref].s = { font:{bold:true,sz:12,color:{rgb:COLOR_TOTAL_FG},name:'Arial'}, fill:{fgColor:{rgb:COLOR_TOTAL_BG}}, alignment:{horizontal:c===0?'left':'center'}, border:borderMed };
-  }
-  ws2['!rows'] = [];
-  ws2['!rows'][0] = {hpt:30}; ws2['!rows'][1] = {hpt:22}; ws2['!rows'][3] = {hpt:30};
-  XLSX.utils.book_append_sheet(wb, ws2, 'Por producto');
+  pRows.push([]);
+  pRows.push(['TOTAL',totalGlobal,'100%']);
 
-  // ── HOJA 3: Resumen por sala ──────────────────────────────
-  const salaRows = [];
-  salaRows.push(['Resumen por Sala']);
-  salaRows.push([dateLabel]);
-  salaRows.push([]);
-  salaRows.push(['Sala', 'N° registros', 'Total unidades']);
-  let salaDataRows = [];
-  for (let i = 1; i <= ROOMS; i++) {
-    const records = data['sala_' + i] || [];
-    if (records.length === 0) continue;
-    const total = records.reduce((s, r) => s + PRODUCTS.reduce((s2, p) => s2 + (r.productos[p.id] || 0), 0), 0);
-    salaDataRows.push(['Sala ' + i, records.length, total]);
+  const ws2=XLSX.utils.aoa_to_sheet(pRows);
+  ws2['!cols']=[{wch:26},{wch:18},{wch:16}];
+  ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}}];
+  ws2['!rows']=[{hpt:34},{hpt:24},{hpt:8},{hpt:38}];
+  for(let c=0;c<3;c++){
+    cs(ws2,0,c,{font:{bold:true,sz:15,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'}});
+    cs(ws2,1,c,{font:{sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE_MID}},alignment:{horizontal:'center',vertical:'center'}});
+    cs(ws2,3,c,{font:{bold:true,sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'},border:bMed});
   }
-  salaDataRows.forEach(r => salaRows.push(r));
-  const totalSalas = salaDataRows.reduce((s,r)=>s+r[2],0);
-  const totalRegs  = salaDataRows.reduce((s,r)=>s+r[1],0);
-  salaRows.push([]);
-  salaRows.push(['TOTAL', totalRegs, totalSalas]);
-
-  const ws3 = XLSX.utils.aoa_to_sheet(salaRows);
-  ws3['!cols'] = [{wch:12},{wch:14},{wch:16}];
-  ws3['!merges'] = [{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}}];
-  for (let c=0;c<3;c++){
-    const r0=XLSX.utils.encode_cell({r:0,c});
-    if(!ws3[r0])ws3[r0]={v:'',t:'s'};
-    ws3[r0].s={font:{bold:true,sz:14,color:{rgb:COLOR_WHITE},name:'Arial'},fill:{fgColor:{rgb:COLOR_CAFE}},alignment:{horizontal:'center'}};
-    const r1=XLSX.utils.encode_cell({r:1,c});
-    if(!ws3[r1])ws3[r1]={v:'',t:'s'};
-    ws3[r1].s={font:{sz:11,color:{rgb:COLOR_WHITE},name:'Arial'},fill:{fgColor:{rgb:COLOR_CAFE_MID}},alignment:{horizontal:'center'}};
-    const r3=XLSX.utils.encode_cell({r:3,c});
-    if(!ws3[r3])ws3[r3]={v:'',t:'s'};
-    ws3[r3].s={font:{bold:true,sz:11,color:{rgb:COLOR_WHITE},name:'Arial'},fill:{fgColor:{rgb:COLOR_CAFE}},alignment:{horizontal:'center'},border:borderMed};
-  }
-  salaDataRows.forEach((_,idx)=>{
-    const er=4+idx; const bg=idx%2===0?COLOR_WHITE:COLOR_CAFE_LIGHT;
+  sortedProds.forEach((p,idx)=>{
+    const er=4+idx; const bg=idx%2===0?C_WHITE:C_CAFE_LIGHT;
+    const isTop=(idx===0);
+    const pctVal = totalGlobal>0?(g[p.id]/totalGlobal)*100:0;
     for(let c=0;c<3;c++){
       const ref=XLSX.utils.encode_cell({r:er,c});
-      if(!ws3[ref])ws3[ref]={v:'',t:'s'};
-      ws3[ref].s={font:{sz:11,name:'Arial',color:{rgb:'1C0F07'}},fill:{fgColor:{rgb:bg}},alignment:{horizontal:c===0?'left':'center'},border:borderThin};
+      if(!ws2[ref]) ws2[ref]={v:'',t:'s'};
+      const v=ws2[ref].v;
+      const isZero=(c===1&&v===0);
+      let cellColor = isTop?C_HIGHLIGHT:bg;
+      let fontColor = C_DARK;
+      if(c===2 && pctVal > 0){
+        if(pctVal >= 30) fontColor = C_RED;
+        else if(pctVal >= 20) fontColor = C_ORANGE;
+        else if(pctVal >= 10) fontColor = C_GREEN;
+        else if(pctVal >= 5) fontColor = C_BLUE;
+        else fontColor = C_PURPLE;
+      }
+      ws2[ref].s={
+        font:{sz:11,name:'Calibri',bold:isTop,color:{rgb:isZero?C_ZERO:fontColor}},
+        fill:{fgColor:{rgb:cellColor}},
+        alignment:{horizontal:c===0?'left':'center',vertical:'center'},
+        border:bThin
+      };
     }
   });
-  const tr3=4+salaDataRows.length+1;
+  const tr2=4+sortedProds.length+1;
+  for(let c=0;c<3;c++){
+    const ref=XLSX.utils.encode_cell({r:tr2,c});
+    if(!ws2[ref]) ws2[ref]={v:'',t:'s'};
+    ws2[ref].s={font:{bold:true,sz:12,color:{rgb:C_DARK_FG},name:'Calibri'},fill:{fgColor:{rgb:C_DARK}},alignment:{horizontal:c===0?'left':'center',vertical:'center'},border:bThick};
+  }
+  XLSX.utils.book_append_sheet(wb,ws2,'Por producto');
+
+  // ── HOJA 3: Acumulado Global por Sala ───────────────────
+  const salaMap = {};
+  for(let i=1;i<=ROOMS;i++) salaMap['sala_'+i] = {label:'Sala '+i, regs:0, total:0, type:'sala'};
+  salaMap['extras'] = {label:'Extras', regs:0, total:0, type:'extra'};
+
+  Object.values(datosAgrupados).forEach(data => {
+    for(let i=1;i<=ROOMS;i++){
+      const records=data['sala_'+i]||[];
+      records.forEach(r => {
+        salaMap['sala_'+i].regs++;
+        salaMap['sala_'+i].total += PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
+      });
+    }
+    const extraRecords = data['extras']||[];
+    extraRecords.forEach(r => {
+      salaMap['extras'].regs++;
+      salaMap['extras'].total += PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
+    });
+  });
+
+  const salaData = Object.values(salaMap).filter(r => r.regs > 0);
+  const totalSalas=salaData.reduce((s,r)=>s+r.total,0);
+  const totalRegsS=salaData.reduce((s,r)=>s+r.regs,0);
+
+  const sRows=[];
+  sRows.push(['Resumen Consolidado por Sala']);
+  sRows.push(['Periodo de Análisis']);
+  sRows.push([]);
+  sRows.push(['Sala / Extras','N° registros totales','Total unidades']);
+  salaData.forEach(r=>sRows.push([r.label, r.regs, r.total]));
+  sRows.push([]);
+  sRows.push(['TOTAL',totalRegsS,totalSalas]);
+
+  const ws3=XLSX.utils.aoa_to_sheet(sRows);
+  ws3['!cols']=[{wch:16},{wch:20},{wch:18}];
+  ws3['!merges']=[{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}}];
+  ws3['!rows']=[{hpt:34},{hpt:24},{hpt:8},{hpt:38}];
+  for(let c=0;c<3;c++){
+    cs(ws3,0,c,{font:{bold:true,sz:15,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'}});
+    cs(ws3,1,c,{font:{sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE_MID}},alignment:{horizontal:'center',vertical:'center'}});
+    cs(ws3,3,c,{font:{bold:true,sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'},border:bMed});
+  }
+  const maxSalaVal = salaData.length>0?Math.max(...salaData.map(r=>r.total)):0;
+  salaData.forEach((r,idx)=>{
+    const er=4+idx; const bg=idx%2===0?C_WHITE:C_CAFE_LIGHT;
+    const intensity = maxSalaVal>0?(r.total/maxSalaVal):0;
+    const isExtra = r.type === 'extra';
+    for(let c=0;c<3;c++){
+      const ref=XLSX.utils.encode_cell({r:er,c});
+      if(!ws3[ref]) ws3[ref]={v:'',t:'s'};
+      let cellBg = bg;
+      let fontCol = C_DARK;
+      if(isExtra){
+        cellBg = C_EXTRA_BG;
+        fontCol = C_EXTRA;
+      } else if(c===2 && intensity > 0){
+        if(intensity >= 0.8) { cellBg = 'E74C3C'; fontCol = C_WHITE; }
+        else if(intensity >= 0.6) { cellBg = 'E67E22'; fontCol = C_WHITE; }
+        else if(intensity >= 0.4) { cellBg = 'F1C40F'; fontCol = C_DARK; }
+        else if(intensity >= 0.2) { cellBg = '2ECC71'; fontCol = C_WHITE; }
+        else { cellBg = '3498DB'; fontCol = C_WHITE; }
+      }
+      ws3[ref].s={
+        font:{sz:11,name:'Calibri',color:{rgb:fontCol},bold:c===0},
+        fill:{fgColor:{rgb:cellBg}},
+        alignment:{horizontal:c===0?'left':'center',vertical:'center'},
+        border:bThin
+      };
+    }
+  });
+  const tr3=4+salaData.length+1;
   for(let c=0;c<3;c++){
     const ref=XLSX.utils.encode_cell({r:tr3,c});
-    if(!ws3[ref])ws3[ref]={v:'',t:'s'};
-    ws3[ref].s={font:{bold:true,sz:12,color:{rgb:COLOR_TOTAL_FG},name:'Arial'},fill:{fgColor:{rgb:COLOR_TOTAL_BG}},alignment:{horizontal:c===0?'left':'center'},border:borderMed};
+    if(!ws3[ref]) ws3[ref]={v:'',t:'s'};
+    ws3[ref].s={font:{bold:true,sz:12,color:{rgb:C_DARK_FG},name:'Calibri'},fill:{fgColor:{rgb:C_DARK}},alignment:{horizontal:c===0?'left':'center',vertical:'center'},border:bThick};
   }
-  ws3['!rows']=[]; ws3['!rows'][0]={hpt:30}; ws3['!rows'][1]={hpt:22}; ws3['!rows'][3]={hpt:30};
-  XLSX.utils.book_append_sheet(wb, ws3, 'Por sala');
+  XLSX.utils.book_append_sheet(wb,ws3,'Por sala');
 
-  XLSX.writeFile(wb, 'Bebestibles_' + dateStr + '.xlsx');
+  XLSX.writeFile(wb, nombreArchivo + '.xlsx');
 }
 
-function clearDay() {
-  if (!confirm('¿Limpiar todos los registros de este día? No se puede deshacer.')) return;
+function clearDay(){
+  if(!confirm('¿Limpiar todos los registros de este día? No se puede deshacer.')) return;
   localStorage.removeItem(viewingDay);
-  viewingDay = null;
+  viewingDay=null;
   showStep('main');
 }
 </script>
