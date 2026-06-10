@@ -95,7 +95,6 @@
   </div>
   <div class="content">
 
-    <!-- PASO 1: Principal con tabs -->
     <div class="step active" id="step-main">
       <div class="tabs">
         <button class="tab-btn active" id="tab-hoy" onclick="setTab('hoy')"><i class="ti ti-calendar-today"></i> Hoy</button>
@@ -114,7 +113,6 @@
       </div>
     </div>
 
-    <!-- PASO 2: Registro de productos -->
     <div class="step" id="step-products">
       <button class="nav-back" onclick="showStep('main')"><i class="ti ti-arrow-left"></i> Volver a salas</button>
       <div class="section-label" id="prod-label">Sala X — Nuevo registro</div>
@@ -124,7 +122,6 @@
       <button class="btn-secondary" onclick="showStep('main')">Cancelar</button>
     </div>
 
-    <!-- PASO 3: Resumen de un día -->
     <div class="step" id="step-summary">
       <button class="nav-back" onclick="backFromSummary()"><i class="ti ti-arrow-left"></i> <span id="back-label">Atrás</span></button>
       <div class="section-label" id="summary-title">Resumen</div>
@@ -152,7 +149,7 @@ const PRODUCTS = [
   {id:'jugo_manzana', name:'Jugo de manzana',      emoji:'🍎'},
   {id:'jugo_pina',    name:'Jugo de piña',         emoji:'🍍'},
   {id:'jugo_frutilla',name:'Jugo de frutilla',     emoji:'🍓'},
-  // Para agregar más: copia la línea de arriba y cambia id, name y emoji
+  // Para agregar más: copia una línea y cambia id, name y emoji
 ];
 const ROOMS = 15;
 // ============================================================
@@ -170,7 +167,6 @@ function allDayKeys() {
   for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(PREFIX)) keys.push(k); }
   return keys.sort().reverse();
 }
-
 function fmtDateFromISO(iso) {
   const d = new Date(iso + 'T12:00:00');
   return d.toLocaleDateString('es-CL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
@@ -214,8 +210,6 @@ function renderHistorial() {
   const list = document.getElementById('day-list');
   const noHist = document.getElementById('no-hist');
   list.innerHTML = '';
-
-  // Hoy siempre arriba
   const todayData = loadDay(tk);
   const todayRegs = Object.values(todayData).reduce((s, r) => s + (r ? r.length : 0), 0);
   const todayCard = document.createElement('div');
@@ -223,7 +217,6 @@ function renderHistorial() {
   todayCard.innerHTML = `<div><div class="day-name">Hoy <span class="today-pill">HOY</span></div><div class="day-meta">${todayRegs} registro${todayRegs !== 1 ? 's' : ''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
   todayCard.onclick = () => goSummaryDay(tk, false);
   list.appendChild(todayCard);
-
   const hist = keys.filter(k => k !== tk);
   if (hist.length === 0) { noHist.style.display = 'block'; return; }
   noHist.style.display = 'none';
@@ -339,32 +332,291 @@ function renderSummaryForDay(dayKey) {
   document.getElementById('summary-list').innerHTML = html;
 }
 
+// ============================================================
+// EXPORTAR EXCEL CON FORMATO VISUAL
+// ============================================================
+function styleCell(ws, cellRef, opts) {
+  if (!ws[cellRef]) return;
+  ws[cellRef].s = opts;
+}
+
+function applyRangeStyle(ws, range, style) {
+  const r = XLSX.utils.decode_range(range);
+  for (let R = r.s.r; R <= r.e.r; R++) {
+    for (let C = r.s.c; C <= r.e.c; C++) {
+      const ref = XLSX.utils.encode_cell({r: R, c: C});
+      if (!ws[ref]) ws[ref] = {v: '', t: 's'};
+      ws[ref].s = style;
+    }
+  }
+}
+
 function exportExcel() {
   const data = loadDay(viewingDay);
   const dateStr = dateFromKey(viewingDay);
+  const dateLabel = fmtDateFromISO(dateStr);
   const wb = XLSX.utils.book_new();
+
+  // Colores cafetería
+  const COLOR_CAFE      = 'B5652A'; // café — encabezados principales
+  const COLOR_CAFE_MID  = 'D4956A'; // café medio — subencabezados
+  const COLOR_CAFE_LIGHT= 'F5EDD8'; // crema — filas alternas
+  const COLOR_WHITE     = 'FFFFFF';
+  const COLOR_TOTAL_BG  = '1C0F07'; // café oscuro — fila totales
+  const COLOR_TOTAL_FG  = 'F5EDD8';
+  const COLOR_ZERO      = 'CCCCCC'; // gris para ceros
+
+  const borderThin = {
+    top:    {style:'thin', color:{rgb:'D4956A'}},
+    bottom: {style:'thin', color:{rgb:'D4956A'}},
+    left:   {style:'thin', color:{rgb:'D4956A'}},
+    right:  {style:'thin', color:{rgb:'D4956A'}},
+  };
+  const borderMed = {
+    top:    {style:'medium', color:{rgb:'B5652A'}},
+    bottom: {style:'medium', color:{rgb:'B5652A'}},
+    left:   {style:'medium', color:{rgb:'B5652A'}},
+    right:  {style:'medium', color:{rgb:'B5652A'}},
+  };
+
+  // ── HOJA 1: Detalle completo ──────────────────────────────
   const hdr = ['Sala', 'Hora', ...PRODUCTS.map(p => p.name), 'Total'];
-  const rows = [hdr];
-  const totals = ['TOTAL', '', ...PRODUCTS.map(() => 0), 0];
+  const rows = [];
+
+  // Fila título
+  rows.push([`Reporte de Bebestibles — ${dateLabel}`]);
+  rows.push([]); // espacio
+  rows.push(hdr);
+
+  const dataRows = [];
+  const totalsArr = new Array(PRODUCTS.length).fill(0);
+  let grandTotal = 0;
+
   for (let i = 1; i <= ROOMS; i++) {
     (data['sala_' + i] || []).forEach(r => {
       const row = ['Sala ' + i, fmtTime(r.ts)];
       let rt = 0;
-      PRODUCTS.forEach((p, idx) => { const v = r.productos[p.id] || 0; row.push(v); totals[idx+2] += v; rt += v; });
-      row.push(rt); rows.push(row);
+      PRODUCTS.forEach((p, idx) => {
+        const v = r.productos[p.id] || 0;
+        row.push(v);
+        totalsArr[idx] += v;
+        rt += v;
+      });
+      row.push(rt);
+      grandTotal += rt;
+      dataRows.push(row);
     });
   }
-  totals[totals.length-1] = totals.slice(2,-1).reduce((s,v)=>s+v,0);
-  rows.push([]); rows.push(totals);
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols'] = [{wch:10},{wch:8},...PRODUCTS.map(()=>({wch:18})),{wch:10}];
-  XLSX.utils.book_append_sheet(wb, ws, 'Detalle');
-  const sum = [['Producto','Total']];
-  const g = {}; PRODUCTS.forEach(p => g[p.id] = 0);
-  for (let i = 1; i <= ROOMS; i++) { (data['sala_'+i]||[]).forEach(r => { PRODUCTS.forEach(p => { g[p.id] += (r.productos[p.id]||0); }); }); }
-  PRODUCTS.forEach(p => sum.push([p.name, g[p.id]]));
-  const ws2 = XLSX.utils.aoa_to_sheet(sum); ws2['!cols'] = [{wch:22},{wch:12}];
+
+  dataRows.forEach(r => rows.push(r));
+  rows.push([]); // espacio
+  rows.push(['TOTAL GENERAL', '', ...totalsArr, grandTotal]);
+
+  const ws1 = XLSX.utils.aoa_to_sheet(rows);
+
+  // Anchos de columna
+  ws1['!cols'] = [
+    {wch: 12}, {wch: 8},
+    ...PRODUCTS.map(() => ({wch: 20})),
+    {wch: 12}
+  ];
+
+  // Fila 1 título (merge)
+  const totalCols = 2 + PRODUCTS.length + 1;
+  ws1['!merges'] = [
+    {s:{r:0,c:0}, e:{r:0,c:totalCols-1}}
+  ];
+
+  // Estilo fila título (row 0)
+  for (let c = 0; c < totalCols; c++) {
+    const ref = XLSX.utils.encode_cell({r:0, c});
+    if (!ws1[ref]) ws1[ref] = {v:'', t:'s'};
+    ws1[ref].s = {
+      font: {bold:true, sz:14, color:{rgb:COLOR_WHITE}, name:'Arial'},
+      fill: {fgColor:{rgb:COLOR_CAFE}},
+      alignment: {horizontal:'center', vertical:'center'},
+    };
+  }
+
+  // Estilo encabezado (row 2)
+  for (let c = 0; c < totalCols; c++) {
+    const ref = XLSX.utils.encode_cell({r:2, c});
+    if (!ws1[ref]) ws1[ref] = {v:'', t:'s'};
+    ws1[ref].s = {
+      font: {bold:true, sz:11, color:{rgb:COLOR_WHITE}, name:'Arial'},
+      fill: {fgColor:{rgb:COLOR_CAFE}},
+      alignment: {horizontal:'center', vertical:'center', wrapText:true},
+      border: borderMed,
+    };
+  }
+
+  // Estilo filas de datos (row 3 en adelante)
+  dataRows.forEach((row, idx) => {
+    const excelRow = 3 + idx;
+    const isEven = idx % 2 === 0;
+    const bgColor = isEven ? COLOR_WHITE : COLOR_CAFE_LIGHT;
+    for (let c = 0; c < totalCols; c++) {
+      const ref = XLSX.utils.encode_cell({r: excelRow, c});
+      if (!ws1[ref]) ws1[ref] = {v: 0, t: 'n'};
+      const isZero = c >= 2 && c < totalCols - 1 && ws1[ref].v === 0;
+      ws1[ref].s = {
+        font: {
+          sz: 11, name: 'Arial',
+          color: {rgb: isZero ? COLOR_ZERO : '1C0F07'},
+          bold: c === totalCols - 1,
+        },
+        fill: {fgColor: {rgb: bgColor}},
+        alignment: {horizontal: c >= 2 ? 'center' : 'left', vertical:'center'},
+        border: borderThin,
+      };
+    }
+  });
+
+  // Fila TOTAL GENERAL
+  const totalRow = 3 + dataRows.length + 1;
+  for (let c = 0; c < totalCols; c++) {
+    const ref = XLSX.utils.encode_cell({r: totalRow, c});
+    if (!ws1[ref]) ws1[ref] = {v: c < 2 ? '' : 0, t: c < 2 ? 's' : 'n'};
+    ws1[ref].s = {
+      font: {bold:true, sz:12, color:{rgb:COLOR_TOTAL_FG}, name:'Arial'},
+      fill: {fgColor:{rgb:COLOR_TOTAL_BG}},
+      alignment: {horizontal: c >= 2 ? 'center' : 'left', vertical:'center'},
+      border: borderMed,
+    };
+  }
+
+  // Altura de filas
+  ws1['!rows'] = [];
+  ws1['!rows'][0] = {hpt: 30};
+  ws1['!rows'][2] = {hpt: 36};
+  for (let i = 0; i < dataRows.length; i++) ws1['!rows'][3 + i] = {hpt: 22};
+  ws1['!rows'][totalRow] = {hpt: 28};
+
+  XLSX.utils.book_append_sheet(wb, ws1, 'Detalle');
+
+  // ── HOJA 2: Resumen por producto ─────────────────────────
+  const g = {};
+  PRODUCTS.forEach(p => g[p.id] = 0);
+  for (let i = 1; i <= ROOMS; i++) {
+    (data['sala_' + i] || []).forEach(r => {
+      PRODUCTS.forEach(p => { g[p.id] += (r.productos[p.id] || 0); });
+    });
+  }
+  const totalGlobal = Object.values(g).reduce((s,v)=>s+v,0);
+
+  const sumRows = [];
+  sumRows.push(['Resumen por Producto']);
+  sumRows.push([dateLabel]);
+  sumRows.push([]);
+  sumRows.push(['Producto', 'Total unidades', '% del total']);
+  PRODUCTS.forEach(p => {
+    const pct = totalGlobal > 0 ? ((g[p.id] / totalGlobal) * 100).toFixed(1) + '%' : '0%';
+    sumRows.push([p.name, g[p.id], pct]);
+  });
+  sumRows.push([]);
+  sumRows.push(['TOTAL', totalGlobal, '100%']);
+
+  const ws2 = XLSX.utils.aoa_to_sheet(sumRows);
+  ws2['!cols'] = [{wch:24}, {wch:16}, {wch:14}];
+  ws2['!merges'] = [
+    {s:{r:0,c:0}, e:{r:0,c:2}},
+    {s:{r:1,c:0}, e:{r:1,c:2}},
+  ];
+
+  // Título hoja 2
+  for (let c = 0; c < 3; c++) {
+    const ref = XLSX.utils.encode_cell({r:0,c});
+    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
+    ws2[ref].s = { font:{bold:true,sz:14,color:{rgb:COLOR_WHITE},name:'Arial'}, fill:{fgColor:{rgb:COLOR_CAFE}}, alignment:{horizontal:'center'} };
+  }
+  for (let c = 0; c < 3; c++) {
+    const ref = XLSX.utils.encode_cell({r:1,c});
+    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
+    ws2[ref].s = { font:{sz:11,color:{rgb:COLOR_WHITE},name:'Arial'}, fill:{fgColor:{rgb:COLOR_CAFE_MID}}, alignment:{horizontal:'center'} };
+  }
+  // Encabezado col
+  for (let c = 0; c < 3; c++) {
+    const ref = XLSX.utils.encode_cell({r:3,c});
+    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
+    ws2[ref].s = { font:{bold:true,sz:11,color:{rgb:COLOR_WHITE},name:'Arial'}, fill:{fgColor:{rgb:COLOR_CAFE}}, alignment:{horizontal:'center'}, border:borderMed };
+  }
+  // Filas de productos
+  PRODUCTS.forEach((p, idx) => {
+    const excelRow = 4 + idx;
+    const bg = idx % 2 === 0 ? COLOR_WHITE : COLOR_CAFE_LIGHT;
+    for (let c = 0; c < 3; c++) {
+      const ref = XLSX.utils.encode_cell({r:excelRow,c});
+      if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
+      const isZero = c === 1 && ws2[ref].v === 0;
+      ws2[ref].s = {
+        font:{sz:11,name:'Arial',color:{rgb: isZero ? COLOR_ZERO : '1C0F07'}},
+        fill:{fgColor:{rgb:bg}},
+        alignment:{horizontal: c===0?'left':'center'},
+        border:borderThin
+      };
+    }
+  });
+  // Fila total hoja 2
+  const totRow2 = 4 + PRODUCTS.length + 1;
+  for (let c = 0; c < 3; c++) {
+    const ref = XLSX.utils.encode_cell({r:totRow2,c});
+    if (!ws2[ref]) ws2[ref] = {v:'',t:'s'};
+    ws2[ref].s = { font:{bold:true,sz:12,color:{rgb:COLOR_TOTAL_FG},name:'Arial'}, fill:{fgColor:{rgb:COLOR_TOTAL_BG}}, alignment:{horizontal:c===0?'left':'center'}, border:borderMed };
+  }
+  ws2['!rows'] = [];
+  ws2['!rows'][0] = {hpt:30}; ws2['!rows'][1] = {hpt:22}; ws2['!rows'][3] = {hpt:30};
   XLSX.utils.book_append_sheet(wb, ws2, 'Por producto');
+
+  // ── HOJA 3: Resumen por sala ──────────────────────────────
+  const salaRows = [];
+  salaRows.push(['Resumen por Sala']);
+  salaRows.push([dateLabel]);
+  salaRows.push([]);
+  salaRows.push(['Sala', 'N° registros', 'Total unidades']);
+  let salaDataRows = [];
+  for (let i = 1; i <= ROOMS; i++) {
+    const records = data['sala_' + i] || [];
+    if (records.length === 0) continue;
+    const total = records.reduce((s, r) => s + PRODUCTS.reduce((s2, p) => s2 + (r.productos[p.id] || 0), 0), 0);
+    salaDataRows.push(['Sala ' + i, records.length, total]);
+  }
+  salaDataRows.forEach(r => salaRows.push(r));
+  const totalSalas = salaDataRows.reduce((s,r)=>s+r[2],0);
+  const totalRegs  = salaDataRows.reduce((s,r)=>s+r[1],0);
+  salaRows.push([]);
+  salaRows.push(['TOTAL', totalRegs, totalSalas]);
+
+  const ws3 = XLSX.utils.aoa_to_sheet(salaRows);
+  ws3['!cols'] = [{wch:12},{wch:14},{wch:16}];
+  ws3['!merges'] = [{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}}];
+  for (let c=0;c<3;c++){
+    const r0=XLSX.utils.encode_cell({r:0,c});
+    if(!ws3[r0])ws3[r0]={v:'',t:'s'};
+    ws3[r0].s={font:{bold:true,sz:14,color:{rgb:COLOR_WHITE},name:'Arial'},fill:{fgColor:{rgb:COLOR_CAFE}},alignment:{horizontal:'center'}};
+    const r1=XLSX.utils.encode_cell({r:1,c});
+    if(!ws3[r1])ws3[r1]={v:'',t:'s'};
+    ws3[r1].s={font:{sz:11,color:{rgb:COLOR_WHITE},name:'Arial'},fill:{fgColor:{rgb:COLOR_CAFE_MID}},alignment:{horizontal:'center'}};
+    const r3=XLSX.utils.encode_cell({r:3,c});
+    if(!ws3[r3])ws3[r3]={v:'',t:'s'};
+    ws3[r3].s={font:{bold:true,sz:11,color:{rgb:COLOR_WHITE},name:'Arial'},fill:{fgColor:{rgb:COLOR_CAFE}},alignment:{horizontal:'center'},border:borderMed};
+  }
+  salaDataRows.forEach((_,idx)=>{
+    const er=4+idx; const bg=idx%2===0?COLOR_WHITE:COLOR_CAFE_LIGHT;
+    for(let c=0;c<3;c++){
+      const ref=XLSX.utils.encode_cell({r:er,c});
+      if(!ws3[ref])ws3[ref]={v:'',t:'s'};
+      ws3[ref].s={font:{sz:11,name:'Arial',color:{rgb:'1C0F07'}},fill:{fgColor:{rgb:bg}},alignment:{horizontal:c===0?'left':'center'},border:borderThin};
+    }
+  });
+  const tr3=4+salaDataRows.length+1;
+  for(let c=0;c<3;c++){
+    const ref=XLSX.utils.encode_cell({r:tr3,c});
+    if(!ws3[ref])ws3[ref]={v:'',t:'s'};
+    ws3[ref].s={font:{bold:true,sz:12,color:{rgb:COLOR_TOTAL_FG},name:'Arial'},fill:{fgColor:{rgb:COLOR_TOTAL_BG}},alignment:{horizontal:c===0?'left':'center'},border:borderMed};
+  }
+  ws3['!rows']=[]; ws3['!rows'][0]={hpt:30}; ws3['!rows'][1]={hpt:22}; ws3['!rows'][3]={hpt:30};
+  XLSX.utils.book_append_sheet(wb, ws3, 'Por sala');
+
   XLSX.writeFile(wb, 'Bebestibles_' + dateStr + '.xlsx');
 }
 
