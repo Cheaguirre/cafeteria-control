@@ -726,34 +726,44 @@ function renderCalendarioDia(iso){
   const empty=document.getElementById('cal-empty');
   const data=loadDay(iso);
   const regs=countRegs(data);
-
-  document.getElementById('cal-detail-title').textContent=fmtISO(iso);
-
-  const detailList=document.getElementById('cal-detail-list');
   const units=totalUnits(data);
 
-  let html='';
-  html+='<div class="stats-bar" style="margin-bottom:10px;">'
-    +'<div class="stat"><div class="stat-label">Registros</div><div class="stat-val">'+regs+'</div></div>'
-    +'<div class="stat"><div class="stat-label">Unidades</div><div class="stat-val">'+units+'</div></div>'
-    +'</div>';
-  html+='<div id="cal-records-list"></div>';
-  html+='<button class="btn-success" style="margin-top:8px;" onclick="abrirNuevoEnDia(''+iso+'')">'
-    +'<i class="ti ti-plus"></i> Agregar registro a este día</button>';
-  if(regs>0){
-    html+='<button class="btn-primary" style="margin-top:4px;" onclick="expDiaDirecto(''+iso+'')">'
-      +'<i class="ti ti-download"></i> Exportar este día</button>';
-    html+='<button class="btn-danger" onclick="eliminarDia(''+iso+'')">'
-      +'<i class="ti ti-trash"></i> Eliminar día completo</button>';
-  }
-  detailList.innerHTML=html;
+  document.getElementById('cal-detail-title').textContent=fmtISO(iso);
+  const detailList=document.getElementById('cal-detail-list');
 
-  // Editar/eliminar habilitado para TODOS los días sin excepción
+  detailList.innerHTML=`
+    <div class="stats-bar" style="margin-bottom:10px;">
+      <div class="stat"><div class="stat-label">Registros</div><div class="stat-val">${regs}</div></div>
+      <div class="stat"><div class="stat-label">Unidades</div><div class="stat-val">${units}</div></div>
+    </div>
+    <div id="cal-records-list"></div>`;
+
+  const btnAgregar=document.createElement('button');
+  btnAgregar.className='btn-success';
+  btnAgregar.style.cssText='width:100%;padding:12px;margin-top:8px;';
+  btnAgregar.innerHTML='<i class="ti ti-plus"></i> Agregar registro a este día';
+  btnAgregar.onclick=()=>abrirNuevoEnDia(iso);
+  detailList.appendChild(btnAgregar);
+
   if(regs>0){
+    const btnExport=document.createElement('button');
+    btnExport.className='btn-primary';
+    btnExport.style.cssText='width:100%;padding:12px;margin-top:4px;';
+    btnExport.innerHTML='<i class="ti ti-download"></i> Exportar este día';
+    btnExport.onclick=()=>expDiaDirecto(iso);
+    detailList.appendChild(btnExport);
+
+    const btnDel=document.createElement('button');
+    btnDel.className='btn-danger';
+    btnDel.style.cssText='width:100%;padding:12px;margin-top:4px;';
+    btnDel.innerHTML='<i class="ti ti-trash"></i> Eliminar día completo';
+    btnDel.onclick=()=>eliminarDia(iso);
+    detailList.appendChild(btnDel);
+
     renderResumenDia(iso, data, null, 'cal-records-list', true, 'calendario');
   } else {
     document.getElementById('cal-records-list').innerHTML=
-      '<div style="font-size:13px;color:var(--text3);text-align:center;padding:10px 0;">Sin registros — agrega uno con el botón de arriba.</div>';
+      '<div style="font-size:13px;color:var(--text3);text-align:center;padding:10px 0;">Sin registros aún. Agrega uno con el botón de arriba.</div>';
   }
 
   detail.style.display='block';
