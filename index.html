@@ -141,7 +141,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <div class="room-grid" id="room-grid-hoy"></div>
       <div class="section-label-auditorio">Auditorios</div>
       <div class="auditorio-grid" id="auditorio-grid-hoy"></div>
-      <div class="section-label-auditorio">Consumo personal Interno</div>
+      <div class="section-label-auditorio">Consumo personal</div>
       <div id="extras-grid-hoy" style="margin-bottom:16px;"></div>
       <button class="btn-primary" onclick="verResumenHoy()"><i class="ti ti-table-export"></i> Ver resumen de hoy</button>
     </div>
@@ -273,7 +273,16 @@ const ROOMS = [
 
 const PREFIX = 'cafe_v3_';
 
-function todayISO()    { return new Date().toISOString().slice(0,10); }
+// Fecha local del dispositivo — evita desfase UTC
+function todayISO(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+// Timestamp local para guardar la hora exacta al registrar
+function nowLocalISO(){
+  const d=new Date(), p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+}
 function keyFor(iso)   { return PREFIX + iso; }
 function isoFromKey(k) { return k.replace(PREFIX,''); }
 function loadDay(iso)  { try{const s=localStorage.getItem(keyFor(iso));return s?JSON.parse(s):{};}catch(e){return{};} }
@@ -285,9 +294,15 @@ function allISOs(){
   return r.filter(Boolean).sort().reverse();
 }
 function fmtISO(iso){
-  return new Date(iso+'T12:00:00').toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Parseo manual para evitar desfase de zona horaria
+  const p=iso.split('-').map(Number);
+  return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
-function fmtTime(ts){ return new Date(ts).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}); }
+function fmtTime(ts){
+  // Si no tiene Z ni +, es timestamp local — parsearlo sin conversión UTC
+  const d=(ts.includes('Z')||ts.includes('+'))?new Date(ts):new Date(ts.replace('T',' '));
+  return d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+}
 function countRegs(data){ return Object.values(data).reduce((s,r)=>s+(Array.isArray(r)?r.length:0),0); }
 function totalUnits(data){
   let t=0;
@@ -383,10 +398,12 @@ function abrirNuevo(roomId){
   const room = getRoomById(roomId);
   const data = loadDay(todayISO());
   const prev = (data[roomId]||[]).length;
+  const ahora = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
   document.getElementById('nuevo-label').textContent = room.label + ' — Nuevo registro';
-  document.getElementById('nuevo-info').textContent = prev===0
+  document.getElementById('nuevo-info').textContent = (prev===0
     ? 'Primer registro del día para este espacio.'
-    : `Este espacio ya tiene ${prev} registro${prev>1?'s':''} hoy. Este será independiente.`;
+    : `Este espacio ya tiene ${prev} registro${prev>1?'s':''} hoy. Este será independiente.`)
+    + ` · Hora actual: ${ahora}`;
   renderProductList('nuevo-product-list', {}, 'nq-');
   showPage('nuevo');
 }
@@ -401,7 +418,7 @@ function guardarNuevo(){
   const iso=todayISO();
   const data=loadDay(iso);
   if(!data[nuevoCtx.roomId]) data[nuevoCtx.roomId]=[];
-  data[nuevoCtx.roomId].push({ts:new Date().toISOString(), productos:{...qty}});
+  data[nuevoCtx.roomId].push({ts:nowLocalISO(), productos:{...qty}});
   saveDay(iso,data);
   showPage('hoy');
 }
