@@ -71,6 +71,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .btn-primary:active{background:var(--accent-dark);transform:scale(.98);}
 .btn-secondary{width:100%;padding:12px;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;margin-bottom:9px;}
 .btn-danger{width:100%;padding:12px;background:var(--danger-bg);color:var(--danger);border:0.5px solid var(--danger);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;margin-bottom:9px;}
+.btn-success{width:100%;padding:12px;background:var(--success-bg);color:var(--success);border:0.5px solid var(--success);border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:9px;}
 
 /* RESUMEN */
 .summary-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
@@ -135,7 +136,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 
   <div class="content">
 
-    <!-- PÁGINA: HOY -->
     <div class="page active" id="page-hoy">
       <div class="section-label">Salas</div>
       <div class="room-grid" id="room-grid-hoy"></div>
@@ -146,7 +146,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <button class="btn-primary" onclick="verResumenHoy()"><i class="ti ti-table-export"></i> Ver resumen de hoy</button>
     </div>
 
-    <!-- PÁGINA: RESUMEN HOY -->
     <div class="page" id="page-resumen-hoy">
       <button class="nav-back" onclick="showPage('hoy')"><i class="ti ti-arrow-left"></i> Salas</button>
       <div class="section-label">Resumen de hoy</div>
@@ -155,7 +154,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <button class="btn-primary" onclick="irExportar()"><i class="ti ti-download"></i> Exportar Excel</button>
     </div>
 
-    <!-- PÁGINA: EDITAR REGISTRO -->
     <div class="page" id="page-editar">
       <button class="nav-back" id="edit-back-btn"><i class="ti ti-arrow-left"></i> <span id="edit-back-label">Atrás</span></button>
       <div class="section-label" id="edit-label">Editando</div>
@@ -165,17 +163,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <button class="btn-secondary" id="edit-cancel-btn">Cancelar</button>
     </div>
 
-    <!-- PÁGINA: NUEVO REGISTRO -->
     <div class="page" id="page-nuevo">
-      <button class="nav-back" onclick="showPage('hoy')"><i class="ti ti-arrow-left"></i> Volver</button>
+      <button class="nav-back" id="nuevo-back-btn" onclick="showPage('hoy')"><i class="ti ti-arrow-left"></i> Volver</button>
       <div class="section-label" id="nuevo-label">Nuevo registro</div>
       <div class="prev-info" id="nuevo-info"></div>
       <div class="product-list" id="nuevo-product-list"></div>
-      <button class="btn-primary" onclick="guardarNuevo()"><i class="ti ti-device-floppy"></i> Guardar registro</button>
-      <button class="btn-secondary" onclick="showPage('hoy')">Cancelar</button>
+      <button class="btn-primary" id="nuevo-save-btn" onclick="guardarNuevo()"><i class="ti ti-device-floppy"></i> Guardar registro</button>
+      <button class="btn-secondary" id="nuevo-cancel-btn" onclick="showPage('hoy')">Cancelar</button>
     </div>
 
-    <!-- PÁGINA: CALENDARIO -->
     <div class="page" id="page-calendario">
       <div class="section-label">Historial de registros</div>
       <div class="cal-nav">
@@ -193,7 +189,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <div id="cal-empty" class="empty-state"><i class="ti ti-touch"></i>Toca un día para ver sus registros.</div>
     </div>
 
-    <!-- PÁGINA: EXPORTAR -->
     <div class="page" id="page-exportar">
       <div class="section-label">Exportar a Excel</div>
       <div class="export-section">
@@ -247,7 +242,6 @@ const PRODUCTS = [
   {id:'jugo_frutilla',name:'Jugo de frutilla',     emoji:'🍓'},
 ];
 
-// Salas normales (1–15) + auditorios
 const ROOMS = [
   {id:'sala_1',  label:'Sala 1',       tipo:'sala'},
   {id:'sala_2',  label:'Sala 2',       tipo:'sala'},
@@ -269,16 +263,13 @@ const ROOMS = [
   {id:'aud_3',   label:'Auditorio 3',  tipo:'auditorio'},
   {id:'extras',  label:'Extras',       tipo:'extras'},
 ];
-// ============================================================
 
 const PREFIX = 'cafe_v3_';
 
-// Fecha local del dispositivo — evita desfase UTC
 function todayISO(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-// Timestamp local para guardar la hora exacta al registrar
 function nowLocalISO(){
   const d=new Date(), p=n=>String(n).padStart(2,'0');
   return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
@@ -294,12 +285,10 @@ function allISOs(){
   return r.filter(Boolean).sort().reverse();
 }
 function fmtISO(iso){
-  // Parseo manual para evitar desfase de zona horaria
   const p=iso.split('-').map(Number);
   return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 function fmtTime(ts){
-  // Si no tiene Z ni +, es timestamp local — parsearlo sin conversión UTC
   const d=(ts.includes('Z')||ts.includes('+'))?new Date(ts):new Date(ts.replace('T',' '));
   return d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
 }
@@ -317,7 +306,7 @@ function getRoomById(id){ return ROOMS.find(r=>r.id===id)||{id,label:id,tipo:'sa
 // ============================================================
 // NAVEGACIÓN
 // ============================================================
-let editCtx=null, nuevoCtx=null;
+let editCtx=null, nuevoCtx=null, nuevoEnDiaCtx=null;
 let calYear, calMonth, calSelectedISO=null;
 let exportTab='dia', semanaOffset=0;
 
@@ -328,7 +317,8 @@ function showPage(name){
   ALL_PAGES.forEach(p=>document.getElementById('page-'+p).classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   Object.entries(NAV_MAP).forEach(([p,nid])=>{
-    document.getElementById(nid).classList.toggle('active', p===name);
+    const el = document.getElementById(nid);
+    if(el) el.classList.toggle('active', p===name);
   });
   if(name==='hoy')        renderRoomsHoy();
   if(name==='resumen-hoy')renderResumenHoy();
@@ -336,7 +326,6 @@ function showPage(name){
   if(name==='exportar')   initExportar();
 }
 
-// Header fecha
 document.getElementById('header-date').textContent = fmtISO(todayISO());
 
 // ============================================================
@@ -346,7 +335,7 @@ function renderRoomsHoy(){
   const data = loadDay(todayISO());
   const salas  = ROOMS.filter(r=>r.tipo==='sala');
   const audits = ROOMS.filter(r=>r.tipo==='auditorio');
-  // Salas
+
   const gSala = document.getElementById('room-grid-hoy');
   gSala.innerHTML='';
   salas.forEach(room=>{
@@ -358,7 +347,6 @@ function renderRoomsHoy(){
     gSala.appendChild(b);
   });
 
-  // Auditorios
   const gAud = document.getElementById('auditorio-grid-hoy');
   gAud.innerHTML='';
   audits.forEach(room=>{
@@ -370,7 +358,6 @@ function renderRoomsHoy(){
     gAud.appendChild(b);
   });
 
-  // Extras (consumo personal)
   const extrasRoom = ROOMS.find(r=>r.tipo==='extras');
   const gExtras = document.getElementById('extras-grid-hoy');
   gExtras.innerHTML='';
@@ -394,17 +381,62 @@ function renderRoomsHoy(){
 renderRoomsHoy();
 
 function abrirNuevo(roomId){
+  nuevoEnDiaCtx = null; // Resetear contexto de día pasado
   nuevoCtx = {roomId};
   const room = getRoomById(roomId);
   const data = loadDay(todayISO());
   const prev = (data[roomId]||[]).length;
   const ahora = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  
   document.getElementById('nuevo-label').textContent = room.label + ' — Nuevo registro';
   document.getElementById('nuevo-info').textContent = (prev===0
     ? 'Primer registro del día para este espacio.'
     : `Este espacio ya tiene ${prev} registro${prev>1?'s':''} hoy. Este será independiente.`)
     + ` · Hora actual: ${ahora}`;
+  
+  // Reestablecer botones de navegación estándar
+  document.getElementById('nuevo-back-btn').onclick = () => showPage('hoy');
+  document.getElementById('nuevo-cancel-btn').onclick = () => showPage('hoy');
+  document.getElementById('nuevo-save-btn').style.display = 'block';
+  
   renderProductList('nuevo-product-list', {}, 'nq-');
+  showPage('nuevo');
+}
+
+function abrirNuevoEnDia(iso){
+  nuevoCtx = null; // Resetear contexto del día de hoy
+  nuevoEnDiaCtx = {iso, roomId: null};
+  
+  document.getElementById('nuevo-label').textContent = 'Agregar registro — ' + fmtISO(iso);
+  document.getElementById('nuevo-info').innerHTML =
+    'Selecciona el espacio:'
+    + '<div id="room-selector" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;max-height:160px;overflow-y:auto;padding:2px;"></div>';
+  document.getElementById('nuevo-product-list').innerHTML = '';
+  document.getElementById('nuevo-save-btn').style.display = 'none';
+
+  // Navegación de retorno al calendario
+  document.getElementById('nuevo-back-btn').onclick = () => { showPage('calendario'); renderCalendarioDia(iso); };
+  document.getElementById('nuevo-cancel-btn').onclick = () => { showPage('calendario'); renderCalendarioDia(iso); };
+
+  setTimeout(()=>{
+    const g = document.getElementById('room-selector');
+    if(!g) return;
+    ROOMS.forEach(room=>{
+      const b = document.createElement('button');
+      b.className = 'room-btn' + (room.tipo==='auditorio'?' auditorio':'') + (room.tipo==='extras'?' extras':'');
+      b.style.fontSize='11px';
+      b.style.padding='8px 2px';
+      b.textContent = room.label;
+      b.onclick = ()=>{
+        nuevoEnDiaCtx.roomId = room.id;
+        document.getElementById('nuevo-info').textContent = room.label + ' · ' + fmtISO(iso);
+        document.getElementById('nuevo-save-btn').style.display = 'block';
+        renderProductList('nuevo-product-list', {}, 'nq-');
+      };
+      g.appendChild(b);
+    });
+  }, 50);
+
   showPage('nuevo');
 }
 
@@ -415,12 +447,30 @@ function guardarNuevo(){
     qty[p.id]=el?parseInt(el.textContent)||0:0;
   });
   if(!Object.values(qty).some(v=>v>0)){alert('Agrega al menos un producto.');return;}
-  const iso=todayISO();
+  
+  // Detectar si guardamos en el día actual o en uno del calendario
+  const esDiaPasado = (nuevoEnDiaCtx && nuevoEnDiaCtx.iso);
+  const iso = esDiaPasado ? nuevoEnDiaCtx.iso : todayISO();
+  const roomId = esDiaPasado ? nuevoEnDiaCtx.roomId : nuevoCtx.roomId;
+  
+  if(!roomId){alert('Por favor selecciona un espacio primero.');return;}
+  
   const data=loadDay(iso);
-  if(!data[nuevoCtx.roomId]) data[nuevoCtx.roomId]=[];
-  data[nuevoCtx.roomId].push({ts:nowLocalISO(), productos:{...qty}});
+  if(!data[roomId]) data[roomId]=[];
+  
+  // Generar timestamp simulado con la fecha correspondiente para evitar desajustes
+  const horaFicticia = esDiaPasado ? `${iso}T12:00:00` : nowLocalISO();
+  
+  data[roomId].push({ts:horaFicticia, productos:{...qty}});
   saveDay(iso,data);
-  showPage('hoy');
+  
+  if(esDiaPasado){
+    calSelectedISO = iso;
+    showPage('calendario');
+    renderCalendarioDia(iso);
+  } else {
+    showPage('hoy');
+  }
 }
 
 function verResumenHoy(){ showPage('resumen-hoy'); }
@@ -446,12 +496,13 @@ function renderResumenDia(iso, data, statsId, listId, editable, fromPage){
   const listEl=document.getElementById(listId);
   if(!listEl)return;
 
-  // Recolectar todos los registros
   const allRecs=[];
   Object.keys(data).forEach(roomId=>{
-    (data[roomId]||[]).forEach((r,idx)=>{
-      allRecs.push({roomId, idx, ts:r.ts, productos:r.productos||{}});
-    });
+    if(Array.isArray(data[roomId])){
+      data[roomId].forEach((r,idx)=>{
+        allRecs.push({roomId, idx, ts:r.ts, productos:r.productos||{}});
+      });
+    }
   });
 
   if(allRecs.length===0){
@@ -459,7 +510,6 @@ function renderResumenDia(iso, data, statsId, listId, editable, fromPage){
     return;
   }
 
-  // Ordenar: por tipo (salas primero) luego número/nombre, luego hora
   allRecs.sort((a,b)=>{
     const ra=getRoomById(a.roomId), rb=getRoomById(b.roomId);
     const orden={sala:0,auditorio:1,extras:2};
@@ -619,24 +669,33 @@ function renderCalendarioDia(iso){
   const empty=document.getElementById('cal-empty');
   const data=loadDay(iso);
   const regs=countRegs(data);
-  const isToday=iso===todayISO();
 
   document.getElementById('cal-detail-title').textContent=fmtISO(iso);
 
   const detailList=document.getElementById('cal-detail-list');
-  if(regs===0){
-    detailList.innerHTML='<div style="font-size:13px;color:var(--text3);text-align:center;padding:12px 0;">No hay registros para este día.</div>';
-  } else {
-    const units=totalUnits(data);
-    detailList.innerHTML=`
-      <div class="stats-bar" style="margin-bottom:10px;">
-        <div class="stat"><div class="stat-label">Registros</div><div class="stat-val">${regs}</div></div>
-        <div class="stat"><div class="stat-label">Unidades</div><div class="stat-val">${units}</div></div>
-      </div>
-      <div id="cal-records-list"></div>
-      <button class="btn-primary" style="margin-top:8px;" onclick="expDiaDirecto('${iso}')"><i class="ti ti-download"></i> Exportar este día</button>
-      ${!isToday?`<button class="btn-danger" onclick="eliminarDia('${iso}')"><i class="ti ti-trash"></i> Eliminar día completo</button>`:''}`;
+  const units=totalUnits(data);
+
+  let html='';
+  html+='<div class="stats-bar" style="margin-bottom:10px;">'
+    +'<div class="stat"><div class="stat-label">Registros</div><div class="stat-val">'+regs+'</div></div>'
+    +'<div class="stat"><div class="stat-label">Unidades</div><div class="stat-val">'+units+'</div></div>'
+    +'</div>';
+  html+='<div id="cal-records-list"></div>';
+  html+='<button class="btn-success" style="margin-top:8px;" onclick="abrirNuevoEnDia(\''+iso+'\')">'
+    +'<i class="ti ti-plus"></i> Agregar registro a este día</button>';
+  if(regs>0){
+    html+='<button class="btn-primary" style="margin-top:4px;" onclick="expDiaDirecto(\''+iso+'\')">'
+      +'<i class="ti ti-download"></i> Exportar este día</button>';
+    html+='<button class="btn-danger" onclick="eliminarDia(\''+iso+'\')">'
+      +'<i class="ti ti-trash"></i> Eliminar día completo</button>';
+  }
+  detailList.innerHTML=html;
+
+  if(regs>0){
     renderResumenDia(iso, data, null, 'cal-records-list', true, 'calendario');
+  } else {
+    document.getElementById('cal-records-list').innerHTML=
+      '<div style="font-size:13px;color:var(--text3);text-align:center;padding:10px 0;">Sin registros — agrega uno con el botón de arriba.</div>';
   }
 
   detail.style.display='block';
@@ -697,6 +756,7 @@ function renderSemanaLabel(){
 
 function populateMonthSelect(){
   const sel=document.getElementById('exp-mes-select');
+  if(!sel) return;
   sel.innerHTML='';
   const months=[...new Set(allISOs().map(i=>i.slice(0,7)))].sort().reverse();
   if(months.length===0){sel.innerHTML='<option>Sin datos</option>';return;}
@@ -730,6 +790,7 @@ function updateExportPreview(){
   if(exportTab==='semana') renderSemanaLabel();
   const days=getDaysForExport();
   const p=document.getElementById('export-preview');
+  if(!p) return;
   if(days.length===0){p.textContent='No hay registros para el período seleccionado.';return;}
   let r=0,u=0;
   days.forEach(iso=>{const d=loadDay(iso);r+=countRegs(d);u+=totalUnits(d);});
@@ -768,14 +829,15 @@ function doExportForDays(days, label){
   const wb=XLSX.utils.book_new();
   const generated=new Date().toLocaleString('es-CL');
 
-  // Recoger registros
   let allRecs=[];
   days.sort().forEach(iso=>{
     const data=loadDay(iso);
     Object.keys(data).forEach(roomId=>{
-      (data[roomId]||[]).forEach(r=>{
-        allRecs.push({iso,roomId,ts:r.ts,productos:r.productos||{}});
-      });
+      if(Array.isArray(data[roomId])){
+        data[roomId].forEach(r=>{
+          allRecs.push({iso,roomId,ts:r.ts,productos:r.productos||{}});
+        });
+      }
     });
   });
   allRecs.sort((a,b)=>{
@@ -787,9 +849,9 @@ function doExportForDays(days, label){
     return ra.label.localeCompare(rb.label,'es',{numeric:true})||a.ts.localeCompare(b.ts);
   });
 
-  const NCOLS=3+PRODUCTS.length+1; // fecha,espacio,hora,productos...,total
+  const NCOLS=3+PRODUCTS.length+1;
 
-  // ── HOJA 1: DETALLE ──────────────────────────────────────
+  // HOJA 1: DETALLE
   {
     const rows=[];
     rows.push([`Reporte de Bebestibles — ${label.replace(/_/g,' ')}`]);
@@ -832,7 +894,7 @@ function doExportForDays(days, label){
     XLSX.utils.book_append_sheet(wb,ws,'Detalle completo');
   }
 
-  // ── HOJA 2: POR PRODUCTO ─────────────────────────────────
+  // HOJA 2: POR PRODUCTO
   {
     const g={};PRODUCTS.forEach(p=>g[p.id]=0);
     allRecs.forEach(r=>PRODUCTS.forEach(p=>{g[p.id]+=(r.productos[p.id]||0);}));
@@ -854,7 +916,7 @@ function doExportForDays(days, label){
     XLSX.utils.book_append_sheet(wb,ws,'Por producto');
   }
 
-  // ── HOJA 3: POR ESPACIO ──────────────────────────────────
+  // HOJA 3: POR ESPACIO
   {
     const sData2={};
     allRecs.forEach(r=>{
@@ -885,7 +947,7 @@ function doExportForDays(days, label){
     XLSX.utils.book_append_sheet(wb,ws,'Por espacio');
   }
 
-  // ── HOJA 4: POR DÍA (solo si más de 1 día) ───────────────
+  // HOJA 4: POR DÍA
   if(days.length>1){
     const rows=[];
     rows.push(['Resumen por Día']); rows.push([label.replace(/_/g,' ')]); rows.push([]);
