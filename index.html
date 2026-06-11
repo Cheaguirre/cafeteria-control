@@ -71,7 +71,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .btn-primary:active{background:var(--accent-dark);transform:scale(.98);}
 .btn-secondary{width:100%;padding:12px;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;margin-bottom:9px;}
 .btn-danger{width:100%;padding:12px;background:var(--danger-bg);color:var(--danger);border:0.5px solid var(--danger);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;margin-bottom:9px;}
-.btn-success{width:100%;padding:12px;background:var(--success-bg);color:var(--success);border:0.5px solid var(--success);border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:9px;}
 
 /* RESUMEN */
 .summary-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
@@ -122,6 +121,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .week-label{flex:1;text-align:center;font-size:12px;color:var(--text2);font-weight:500;}
 .month-sel{width:100%;padding:9px 12px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;font-family:inherit;margin-bottom:10px;}
 .export-preview{font-size:12px;color:var(--text3);margin-bottom:12px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm);}
+
+/* MODAL SELECCIÓN DE SALA */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-box{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:20px 16px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.modal-header-title{font-size:14px;font-weight:600;color:var(--text);}
+.modal-close{width:30px;height:30px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);}
+.modal-room-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 </style>
 </head>
 <body>
@@ -136,6 +143,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 
   <div class="content">
 
+    <!-- PÁGINA: HOY -->
     <div class="page active" id="page-hoy">
       <div class="section-label">Salas</div>
       <div class="room-grid" id="room-grid-hoy"></div>
@@ -146,6 +154,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <button class="btn-primary" onclick="verResumenHoy()"><i class="ti ti-table-export"></i> Ver resumen de hoy</button>
     </div>
 
+    <!-- PÁGINA: RESUMEN HOY -->
     <div class="page" id="page-resumen-hoy">
       <button class="nav-back" onclick="showPage('hoy')"><i class="ti ti-arrow-left"></i> Salas</button>
       <div class="section-label">Resumen de hoy</div>
@@ -154,6 +163,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <button class="btn-primary" onclick="irExportar()"><i class="ti ti-download"></i> Exportar Excel</button>
     </div>
 
+    <!-- PÁGINA: EDITAR REGISTRO -->
     <div class="page" id="page-editar">
       <button class="nav-back" id="edit-back-btn"><i class="ti ti-arrow-left"></i> <span id="edit-back-label">Atrás</span></button>
       <div class="section-label" id="edit-label">Editando</div>
@@ -163,15 +173,17 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <button class="btn-secondary" id="edit-cancel-btn">Cancelar</button>
     </div>
 
+    <!-- PÁGINA: NUEVO REGISTRO -->
     <div class="page" id="page-nuevo">
-      <button class="nav-back" id="nuevo-back-btn" onclick="showPage('hoy')"><i class="ti ti-arrow-left"></i> Volver</button>
+      <button class="nav-back" id="nuevo-back-btn"><i class="ti ti-arrow-left"></i> Volver</button>
       <div class="section-label" id="nuevo-label">Nuevo registro</div>
       <div class="prev-info" id="nuevo-info"></div>
       <div class="product-list" id="nuevo-product-list"></div>
-      <button class="btn-primary" id="nuevo-save-btn" onclick="guardarNuevo()"><i class="ti ti-device-floppy"></i> Guardar registro</button>
-      <button class="btn-secondary" id="nuevo-cancel-btn" onclick="showPage('hoy')">Cancelar</button>
+      <button class="btn-primary" onclick="guardarNuevo()"><i class="ti ti-device-floppy"></i> Guardar registro</button>
+      <button class="btn-secondary" id="nuevo-cancel-btn">Cancelar</button>
     </div>
 
+    <!-- PÁGINA: CALENDARIO -->
     <div class="page" id="page-calendario">
       <div class="section-label">Historial de registros</div>
       <div class="cal-nav">
@@ -189,6 +201,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <div id="cal-empty" class="empty-state"><i class="ti ti-touch"></i>Toca un día para ver sus registros.</div>
     </div>
 
+    <!-- PÁGINA: EXPORTAR -->
     <div class="page" id="page-exportar">
       <div class="section-label">Exportar a Excel</div>
       <div class="export-section">
@@ -218,6 +231,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 
   </div>
 
+
+  <!-- MODAL: Seleccionar sala para día pasado -->
+  <div class="modal-overlay" id="modal-seleccion" onclick="if(event.target===this)cerrarModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-header-title" id="modal-title">Selecciona un espacio</span>
+        <button class="modal-close" onclick="cerrarModal()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="section-label" style="margin-bottom:8px;">Salas y Auditorios</div>
+      <div class="modal-room-grid" id="modal-room-grid"></div>
+    </div>
+  </div>
   <div class="bottom-nav">
     <button class="nav-item active" id="nav-hoy" onclick="showPage('hoy')"><i class="ti ti-layout-grid"></i>Hoy</button>
     <button class="nav-item" id="nav-calendario" onclick="showPage('calendario')"><i class="ti ti-calendar"></i>Historial</button>
@@ -242,6 +267,7 @@ const PRODUCTS = [
   {id:'jugo_frutilla',name:'Jugo de frutilla',     emoji:'🍓'},
 ];
 
+// Salas normales (1–15) + auditorios
 const ROOMS = [
   {id:'sala_1',  label:'Sala 1',       tipo:'sala'},
   {id:'sala_2',  label:'Sala 2',       tipo:'sala'},
@@ -263,13 +289,16 @@ const ROOMS = [
   {id:'aud_3',   label:'Auditorio 3',  tipo:'auditorio'},
   {id:'extras',  label:'Extras',       tipo:'extras'},
 ];
+// ============================================================
 
 const PREFIX = 'cafe_v3_';
 
+// Fecha local del dispositivo — evita desfase UTC
 function todayISO(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+// Timestamp local para guardar la hora exacta al registrar
 function nowLocalISO(){
   const d=new Date(), p=n=>String(n).padStart(2,'0');
   return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
@@ -285,10 +314,12 @@ function allISOs(){
   return r.filter(Boolean).sort().reverse();
 }
 function fmtISO(iso){
+  // Parseo manual para evitar desfase de zona horaria
   const p=iso.split('-').map(Number);
   return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 function fmtTime(ts){
+  // Si no tiene Z ni +, es timestamp local — parsearlo sin conversión UTC
   const d=(ts.includes('Z')||ts.includes('+'))?new Date(ts):new Date(ts.replace('T',' '));
   return d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
 }
@@ -306,7 +337,7 @@ function getRoomById(id){ return ROOMS.find(r=>r.id===id)||{id,label:id,tipo:'sa
 // ============================================================
 // NAVEGACIÓN
 // ============================================================
-let editCtx=null, nuevoCtx=null, nuevoEnDiaCtx=null;
+let editCtx=null, nuevoCtx=null;
 let calYear, calMonth, calSelectedISO=null;
 let exportTab='dia', semanaOffset=0;
 
@@ -317,8 +348,7 @@ function showPage(name){
   ALL_PAGES.forEach(p=>document.getElementById('page-'+p).classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   Object.entries(NAV_MAP).forEach(([p,nid])=>{
-    const el = document.getElementById(nid);
-    if(el) el.classList.toggle('active', p===name);
+    document.getElementById(nid).classList.toggle('active', p===name);
   });
   if(name==='hoy')        renderRoomsHoy();
   if(name==='resumen-hoy')renderResumenHoy();
@@ -326,6 +356,7 @@ function showPage(name){
   if(name==='exportar')   initExportar();
 }
 
+// Header fecha
 document.getElementById('header-date').textContent = fmtISO(todayISO());
 
 // ============================================================
@@ -335,7 +366,7 @@ function renderRoomsHoy(){
   const data = loadDay(todayISO());
   const salas  = ROOMS.filter(r=>r.tipo==='sala');
   const audits = ROOMS.filter(r=>r.tipo==='auditorio');
-
+  // Salas
   const gSala = document.getElementById('room-grid-hoy');
   gSala.innerHTML='';
   salas.forEach(room=>{
@@ -347,6 +378,7 @@ function renderRoomsHoy(){
     gSala.appendChild(b);
   });
 
+  // Auditorios
   const gAud = document.getElementById('auditorio-grid-hoy');
   gAud.innerHTML='';
   audits.forEach(room=>{
@@ -358,6 +390,7 @@ function renderRoomsHoy(){
     gAud.appendChild(b);
   });
 
+  // Extras (consumo personal)
   const extrasRoom = ROOMS.find(r=>r.tipo==='extras');
   const gExtras = document.getElementById('extras-grid-hoy');
   gExtras.innerHTML='';
@@ -380,64 +413,62 @@ function renderRoomsHoy(){
 }
 renderRoomsHoy();
 
-function abrirNuevo(roomId){
-  nuevoEnDiaCtx = null; // Resetear contexto de día pasado
-  nuevoCtx = {roomId};
+function abrirNuevo(roomId, iso, fromPage){
+  iso = iso || todayISO();
+  fromPage = fromPage || 'hoy';
+  nuevoCtx = {roomId, iso, fromPage};
   const room = getRoomById(roomId);
-  const data = loadDay(todayISO());
+  const data = loadDay(iso);
   const prev = (data[roomId]||[]).length;
+  const isToday = iso === todayISO();
   const ahora = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
-  
+  const diaLabel = isToday ? 'hoy' : fmtISO(iso);
   document.getElementById('nuevo-label').textContent = room.label + ' — Nuevo registro';
   document.getElementById('nuevo-info').textContent = (prev===0
-    ? 'Primer registro del día para este espacio.'
-    : `Este espacio ya tiene ${prev} registro${prev>1?'s':''} hoy. Este será independiente.`)
-    + ` · Hora actual: ${ahora}`;
-  
-  // Reestablecer botones de navegación estándar
-  document.getElementById('nuevo-back-btn').onclick = () => showPage('hoy');
-  document.getElementById('nuevo-cancel-btn').onclick = () => showPage('hoy');
-  document.getElementById('nuevo-save-btn').style.display = 'block';
-  
+    ? `Primer registro para este espacio (${diaLabel}).`
+    : `Este espacio ya tiene ${prev} registro${prev>1?'s':''} (${diaLabel}). Este será independiente.`)
+    + (isToday ? ` · Hora actual: ${ahora}` : '');
   renderProductList('nuevo-product-list', {}, 'nq-');
+  // Botón cancelar vuelve al lugar correcto
+  document.getElementById('nuevo-cancel-btn').onclick = () => {
+    if(fromPage==='calendario'){ showPage('calendario'); }
+    else { showPage('hoy'); }
+  };
+  document.getElementById('nuevo-back-btn').onclick = () => {
+    if(fromPage==='calendario'){ showPage('calendario'); }
+    else { showPage('hoy'); }
+  };
   showPage('nuevo');
 }
 
+// Abre el selector de sala para agregar a un día pasado desde el calendario
 function abrirNuevoEnDia(iso){
-  nuevoCtx = null; // Resetear contexto del día de hoy
-  nuevoEnDiaCtx = {iso, roomId: null};
-  
-  document.getElementById('nuevo-label').textContent = 'Agregar registro — ' + fmtISO(iso);
-  document.getElementById('nuevo-info').innerHTML =
-    'Selecciona el espacio:'
-    + '<div id="room-selector" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;max-height:160px;overflow-y:auto;padding:2px;"></div>';
-  document.getElementById('nuevo-product-list').innerHTML = '';
-  document.getElementById('nuevo-save-btn').style.display = 'none';
+  calSelectedISO = iso;
+  // Mostrar modal de selección de espacio
+  const modal = document.getElementById('modal-seleccion');
+  modal.dataset.iso = iso;
+  document.getElementById('modal-title').textContent = 'Agregar registro — ' + fmtISO(iso);
+  renderModalRooms(iso);
+  modal.style.display='flex';
+}
 
-  // Navegación de retorno al calendario
-  document.getElementById('nuevo-back-btn').onclick = () => { showPage('calendario'); renderCalendarioDia(iso); };
-  document.getElementById('nuevo-cancel-btn').onclick = () => { showPage('calendario'); renderCalendarioDia(iso); };
+function renderModalRooms(iso){
+  const data = loadDay(iso);
+  const grid = document.getElementById('modal-room-grid');
+  grid.innerHTML='';
+  ROOMS.forEach(room=>{
+    const records=(data[room.id]||[]).length;
+    const btn=document.createElement('button');
+    btn.className='room-btn'+(records>0?' has-records':'')+(room.tipo==='auditorio'?' auditorio':'')+(room.tipo==='extras'?' extras':'');
+    if(room.tipo==='extras'){ btn.style.gridColumn='1/-1'; btn.style.textAlign='center'; }
+    btn.innerHTML=room.label+(records>0?`<br><span class="badge">${records} reg.</span>`:'');
+    btn.onclick=()=>{ cerrarModal(); abrirNuevo(room.id, iso, 'calendario'); };
+    grid.appendChild(btn);
+  });
+}
 
-  setTimeout(()=>{
-    const g = document.getElementById('room-selector');
-    if(!g) return;
-    ROOMS.forEach(room=>{
-      const b = document.createElement('button');
-      b.className = 'room-btn' + (room.tipo==='auditorio'?' auditorio':'') + (room.tipo==='extras'?' extras':'');
-      b.style.fontSize='11px';
-      b.style.padding='8px 2px';
-      b.textContent = room.label;
-      b.onclick = ()=>{
-        nuevoEnDiaCtx.roomId = room.id;
-        document.getElementById('nuevo-info').textContent = room.label + ' · ' + fmtISO(iso);
-        document.getElementById('nuevo-save-btn').style.display = 'block';
-        renderProductList('nuevo-product-list', {}, 'nq-');
-      };
-      g.appendChild(b);
-    });
-  }, 50);
-
-  showPage('nuevo');
+function cerrarModal(){
+  document.getElementById('modal-seleccion').style.display='none';
 }
 
 function guardarNuevo(){
@@ -447,30 +478,56 @@ function guardarNuevo(){
     qty[p.id]=el?parseInt(el.textContent)||0:0;
   });
   if(!Object.values(qty).some(v=>v>0)){alert('Agrega al menos un producto.');return;}
-  
-  // Detectar si guardamos en el día actual o en uno del calendario
-  const esDiaPasado = (nuevoEnDiaCtx && nuevoEnDiaCtx.iso);
-  const iso = esDiaPasado ? nuevoEnDiaCtx.iso : todayISO();
-  const roomId = esDiaPasado ? nuevoEnDiaCtx.roomId : nuevoCtx.roomId;
-  
-  if(!roomId){alert('Por favor selecciona un espacio primero.');return;}
-  
+  const iso = nuevoCtx.iso || todayISO();
   const data=loadDay(iso);
-  if(!data[roomId]) data[roomId]=[];
-  
-  // Generar timestamp simulado con la fecha correspondiente para evitar desajustes
-  const horaFicticia = esDiaPasado ? `${iso}T12:00:00` : nowLocalISO();
-  
-  data[roomId].push({ts:horaFicticia, productos:{...qty}});
+  if(!data[nuevoCtx.roomId]) data[nuevoCtx.roomId]=[];
+  // Si es un día pasado, usar medianoche de ese día como timestamp
+  const ts = (iso === todayISO()) ? nowLocalISO() : iso+'T12:00:00';
+  data[nuevoCtx.roomId].push({ts, productos:{...qty}});
   saveDay(iso,data);
-  
-  if(esDiaPasado){
-    calSelectedISO = iso;
-    showPage('calendario');
+  // Volver al lugar correcto
+  if(nuevoCtx.fromPage==='calendario'){
+    calSelectedISO=iso;
     renderCalendarioDia(iso);
+    showPage('calendario');
   } else {
     showPage('hoy');
   }
+}
+
+// Agregar registro a un día pasado desde el calendario
+let nuevoEnDiaCtx = null;
+
+function abrirNuevoEnDia(iso){
+  nuevoEnDiaCtx = {iso};
+  // Mostrar selector de sala en página nuevo
+  document.getElementById('nuevo-label').textContent = 'Agregar registro — ' + fmtISO(iso);
+  document.getElementById('nuevo-info').innerHTML =
+    'Selecciona el espacio:'
+    + '<div id="room-selector" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;"></div>';
+  document.getElementById('nuevo-product-list').innerHTML = '';
+  document.getElementById('nuevo-save-btn').style.display='none';
+
+  // Render selector de sala
+  setTimeout(()=>{
+    const g = document.getElementById('room-selector');
+    if(!g) return;
+    ROOMS.forEach(room=>{
+      const b = document.createElement('button');
+      b.className = 'room-btn' + (room.tipo==='auditorio'?' auditorio':'') + (room.tipo==='extras'?' extras':'');
+      b.style.fontSize='11px';
+      b.textContent = room.label;
+      b.onclick = ()=>{
+        nuevoEnDiaCtx.roomId = room.id;
+        document.getElementById('nuevo-info').textContent = room.label + ' · ' + fmtISO(iso);
+        document.getElementById('nuevo-save-btn').style.display='block';
+        renderProductList('nuevo-product-list', {}, 'nq-');
+      };
+      g.appendChild(b);
+    });
+  }, 50);
+
+  showPage('nuevo');
 }
 
 function verResumenHoy(){ showPage('resumen-hoy'); }
@@ -496,13 +553,12 @@ function renderResumenDia(iso, data, statsId, listId, editable, fromPage){
   const listEl=document.getElementById(listId);
   if(!listEl)return;
 
+  // Recolectar todos los registros
   const allRecs=[];
   Object.keys(data).forEach(roomId=>{
-    if(Array.isArray(data[roomId])){
-      data[roomId].forEach((r,idx)=>{
-        allRecs.push({roomId, idx, ts:r.ts, productos:r.productos||{}});
-      });
-    }
+    (data[roomId]||[]).forEach((r,idx)=>{
+      allRecs.push({roomId, idx, ts:r.ts, productos:r.productos||{}});
+    });
   });
 
   if(allRecs.length===0){
@@ -510,6 +566,7 @@ function renderResumenDia(iso, data, statsId, listId, editable, fromPage){
     return;
   }
 
+  // Ordenar: por tipo (salas primero) luego número/nombre, luego hora
   allRecs.sort((a,b)=>{
     const ra=getRoomById(a.roomId), rb=getRoomById(b.roomId);
     const orden={sala:0,auditorio:1,extras:2};
@@ -681,16 +738,17 @@ function renderCalendarioDia(iso){
     +'<div class="stat"><div class="stat-label">Unidades</div><div class="stat-val">'+units+'</div></div>'
     +'</div>';
   html+='<div id="cal-records-list"></div>';
-  html+='<button class="btn-success" style="margin-top:8px;" onclick="abrirNuevoEnDia(\''+iso+'\')">'
+  html+='<button class="btn-success" style="margin-top:8px;" onclick="abrirNuevoEnDia(''+iso+'')">'
     +'<i class="ti ti-plus"></i> Agregar registro a este día</button>';
   if(regs>0){
-    html+='<button class="btn-primary" style="margin-top:4px;" onclick="expDiaDirecto(\''+iso+'\')">'
+    html+='<button class="btn-primary" style="margin-top:4px;" onclick="expDiaDirecto(''+iso+'')">'
       +'<i class="ti ti-download"></i> Exportar este día</button>';
-    html+='<button class="btn-danger" onclick="eliminarDia(\''+iso+'\')">'
+    html+='<button class="btn-danger" onclick="eliminarDia(''+iso+'')">'
       +'<i class="ti ti-trash"></i> Eliminar día completo</button>';
   }
   detailList.innerHTML=html;
 
+  // Editar/eliminar habilitado para TODOS los días sin excepción
   if(regs>0){
     renderResumenDia(iso, data, null, 'cal-records-list', true, 'calendario');
   } else {
@@ -701,7 +759,6 @@ function renderCalendarioDia(iso){
   detail.style.display='block';
   empty.style.display='none';
 }
-
 function eliminarDia(iso){
   if(!confirm(`¿Eliminar TODOS los registros del ${fmtISO(iso)}? No se puede deshacer.`))return;
   removeDay(iso);
@@ -756,7 +813,6 @@ function renderSemanaLabel(){
 
 function populateMonthSelect(){
   const sel=document.getElementById('exp-mes-select');
-  if(!sel) return;
   sel.innerHTML='';
   const months=[...new Set(allISOs().map(i=>i.slice(0,7)))].sort().reverse();
   if(months.length===0){sel.innerHTML='<option>Sin datos</option>';return;}
@@ -790,7 +846,6 @@ function updateExportPreview(){
   if(exportTab==='semana') renderSemanaLabel();
   const days=getDaysForExport();
   const p=document.getElementById('export-preview');
-  if(!p) return;
   if(days.length===0){p.textContent='No hay registros para el período seleccionado.';return;}
   let r=0,u=0;
   days.forEach(iso=>{const d=loadDay(iso);r+=countRegs(d);u+=totalUnits(d);});
@@ -829,15 +884,14 @@ function doExportForDays(days, label){
   const wb=XLSX.utils.book_new();
   const generated=new Date().toLocaleString('es-CL');
 
+  // Recoger registros
   let allRecs=[];
   days.sort().forEach(iso=>{
     const data=loadDay(iso);
     Object.keys(data).forEach(roomId=>{
-      if(Array.isArray(data[roomId])){
-        data[roomId].forEach(r=>{
-          allRecs.push({iso,roomId,ts:r.ts,productos:r.productos||{}});
-        });
-      }
+      (data[roomId]||[]).forEach(r=>{
+        allRecs.push({iso,roomId,ts:r.ts,productos:r.productos||{}});
+      });
     });
   });
   allRecs.sort((a,b)=>{
@@ -849,9 +903,9 @@ function doExportForDays(days, label){
     return ra.label.localeCompare(rb.label,'es',{numeric:true})||a.ts.localeCompare(b.ts);
   });
 
-  const NCOLS=3+PRODUCTS.length+1;
+  const NCOLS=3+PRODUCTS.length+1; // fecha,espacio,hora,productos...,total
 
-  // HOJA 1: DETALLE
+  // ── HOJA 1: DETALLE ──────────────────────────────────────
   {
     const rows=[];
     rows.push([`Reporte de Bebestibles — ${label.replace(/_/g,' ')}`]);
@@ -894,7 +948,7 @@ function doExportForDays(days, label){
     XLSX.utils.book_append_sheet(wb,ws,'Detalle completo');
   }
 
-  // HOJA 2: POR PRODUCTO
+  // ── HOJA 2: POR PRODUCTO ─────────────────────────────────
   {
     const g={};PRODUCTS.forEach(p=>g[p.id]=0);
     allRecs.forEach(r=>PRODUCTS.forEach(p=>{g[p.id]+=(r.productos[p.id]||0);}));
@@ -916,7 +970,7 @@ function doExportForDays(days, label){
     XLSX.utils.book_append_sheet(wb,ws,'Por producto');
   }
 
-  // HOJA 3: POR ESPACIO
+  // ── HOJA 3: POR ESPACIO ──────────────────────────────────
   {
     const sData2={};
     allRecs.forEach(r=>{
@@ -947,7 +1001,7 @@ function doExportForDays(days, label){
     XLSX.utils.book_append_sheet(wb,ws,'Por espacio');
   }
 
-  // HOJA 4: POR DÍA
+  // ── HOJA 4: POR DÍA (solo si más de 1 día) ───────────────
   if(days.length>1){
     const rows=[];
     rows.push(['Resumen por Día']); rows.push([label.replace(/_/g,' ')]); rows.push([]);
