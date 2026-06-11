@@ -495,40 +495,35 @@ function guardarNuevo(){
   }
 }
 
-// Agregar registro a un día pasado desde el calendario
-let nuevoEnDiaCtx = null;
-
-function abrirNuevoEnDia(iso){
-  nuevoEnDiaCtx = {iso};
-  // Mostrar selector de sala en página nuevo
-  document.getElementById('nuevo-label').textContent = 'Agregar registro — ' + fmtISO(iso);
-  document.getElementById('nuevo-info').innerHTML =
-    'Selecciona el espacio:'
-    + '<div id="room-selector" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;"></div>';
-  document.getElementById('nuevo-product-list').innerHTML = '';
-  document.getElementById('nuevo-save-btn').style.display='none';
-
-  // Render selector de sala
-  setTimeout(()=>{
-    const g = document.getElementById('room-selector');
-    if(!g) return;
-    ROOMS.forEach(room=>{
-      const b = document.createElement('button');
-      b.className = 'room-btn' + (room.tipo==='auditorio'?' auditorio':'') + (room.tipo==='extras'?' extras':'');
-      b.style.fontSize='11px';
-      b.textContent = room.label;
-      b.onclick = ()=>{
-        nuevoEnDiaCtx.roomId = room.id;
-        document.getElementById('nuevo-info').textContent = room.label + ' · ' + fmtISO(iso);
-        document.getElementById('nuevo-save-btn').style.display='block';
-        renderProductList('nuevo-product-list', {}, 'nq-');
-      };
-      g.appendChild(b);
-    });
-  }, 50);
-
+function abrirNuevo(roomId, iso, fromPage){
+  iso = iso || todayISO();
+  fromPage = fromPage || 'hoy';
+  nuevoCtx = {roomId, iso, fromPage};
+  const room = getRoomById(roomId);
+  const data = loadDay(iso);
+  const prev = (data[roomId]||[]).length;
+  const isToday = iso === todayISO();
+  const ahora = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  const diaLabel = isToday ? 'hoy' : fmtISO(iso);
+  document.getElementById('nuevo-label').textContent = room.label + ' — Nuevo registro';
+  document.getElementById('nuevo-info').textContent = (prev===0
+    ? `Primer registro para este espacio (${diaLabel}).`
+    : `Este espacio ya tiene ${prev} registro${prev>1?'s':''} (${diaLabel}). Este será independiente.`)
+    + (isToday ? ` · Hora actual: ${ahora}` : '');
+  renderProductList('nuevo-product-list', {}, 'nq-');
+  // Botón cancelar vuelve al lugar correcto
+  document.getElementById('nuevo-cancel-btn').onclick = () => {
+    if(fromPage==='calendario'){ showPage('calendario'); }
+    else { showPage('hoy'); }
+  };
+  document.getElementById('nuevo-back-btn').onclick = () => {
+    if(fromPage==='calendario'){ showPage('calendario'); }
+    else { showPage('hoy'); }
+  };
   showPage('nuevo');
 }
+
+// Abre el selector de sala para agregar a un día pasado desde el calendario
 
 function verResumenHoy(){ showPage('resumen-hoy'); }
 
