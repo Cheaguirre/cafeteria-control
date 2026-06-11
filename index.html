@@ -13,144 +13,114 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --accent:#B5652A;--accent-dark:#8E4A1E;--accent-light:#F5EDD8;
-  --bg:#F7F4EF;--surface:#FFFFFF;--surface2:#F2EDE6;
+  --bg:#F7F4EF;--surface:#FFFFFF;--surface2:#F2EDE6;--surface3:#EAE0D5;
   --text:#1C0F07;--text2:#6B5040;--text3:#9A7D6B;
   --border:rgba(107,58,34,0.15);--border2:rgba(107,58,34,0.28);
   --radius:12px;--radius-sm:8px;
   --danger:#C0392B;--danger-bg:#FDF0EE;
-  --success:#1E7C45;--success-bg:#EAF7EF;
-  --extra:#2E86AB;--extra-bg:#EBF5FB;
-  --extra-dark:#1A5276;
+  --success:#1A7F4B;--success-bg:#EAF7F0;
 }
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#150A04;--surface:#1F1009;--surface2:#2A160A;
-    --text:#F5EDD8;--text2:#C9A882;--text3:#8A6B52;
-    --border:rgba(245,237,216,0.12);--border2:rgba(245,237,216,0.22);
-    --danger-bg:#2A0E0B;--success-bg:#0D2A1A;
-    --extra-bg:#0A1F2E;
-  }
-}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#150A04;--surface:#1F1009;--surface2:#2A160A;--surface3:#351C0E;
+  --text:#F5EDD8;--text2:#C9A882;--text3:#8A6B52;
+  --border:rgba(245,237,216,0.12);--border2:rgba(245,237,216,0.22);
+  --danger-bg:#2A0E0B;--success-bg:#0D2A1A;
+}}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
 #app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
-.header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:10;}
-.logo{width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.logo i{color:#FDF8F0;font-size:20px;}
-.header-text .title{font-size:16px;font-weight:600;color:var(--text);}
-.header-text .sub{font-size:12px;color:var(--text3);margin-top:1px;}
-.content{flex:1;padding:16px;}
-.step{display:none;}.step.active{display:block;}
-.tabs{display:flex;margin-bottom:16px;border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
-.tab-btn{flex:1;padding:10px;background:var(--surface);border:none;cursor:pointer;font-size:14px;color:var(--text3);font-family:inherit;}
-.tab-btn.active{background:var(--accent);color:#FDF8F0;font-weight:600;}
+.header{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--surface);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:20;}
+.logo{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo i{color:#FDF8F0;font-size:19px;}
+.header-text .title{font-size:15px;font-weight:600;color:var(--text);}
+.header-text .sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.bottom-nav{display:flex;background:var(--surface);border-top:0.5px solid var(--border);position:sticky;bottom:0;z-index:20;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:10px;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+.nav-item i{font-size:22px;}
+.nav-item.active{color:var(--accent);}
+.content{flex:1;padding:16px;overflow-y:auto;}
+.page{display:none;}.page.active{display:block;}
 .section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;}
+.section-label-auditorio{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;margin-top:16px;}
 .nav-back{display:flex;align-items:center;gap:6px;color:var(--text3);font-size:14px;cursor:pointer;margin-bottom:14px;background:none;border:none;padding:0;-webkit-tap-highlight-color:transparent;}
 .nav-back i{font-size:16px;}
 
-/* Salas */
-.room-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
-.room-btn{padding:10px 4px 8px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;color:var(--text);text-align:center;line-height:1.3;-webkit-tap-highlight-color:transparent;position:relative;}
-.room-btn:active{transform:scale(.95);}
+/* GRIDS */
+.room-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;}
+.auditorio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.room-btn{padding:10px 4px 8px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:12px;font-weight:500;color:var(--text);text-align:center;line-height:1.4;-webkit-tap-highlight-color:transparent;transition:transform .1s;}
+.room-btn:active{transform:scale(.94);}
 .room-btn.has-records{border-color:var(--accent);color:var(--accent);}
-.room-btn .badge{display:inline-block;background:var(--accent);color:#FDF8F0;border-radius:99px;font-size:10px;padding:1px 6px;margin-top:4px;}
-.room-btn .edit-hint{position:absolute;top:4px;right:4px;font-size:11px;color:var(--text3);opacity:.6;}
+.room-btn.auditorio{border-color:var(--border2);background:var(--surface2);}
+.room-btn.auditorio.has-records{border-color:var(--accent);color:var(--accent);background:var(--surface);}
+.room-btn.extras{border-color:#1A7F4B;color:#1A7F4B;background:var(--success-bg);font-size:13px;}
+.room-btn.extras.has-records{border-color:#1A7F4B;color:#1A7F4B;background:var(--success-bg);}
+.room-btn .badge{display:inline-block;background:var(--accent);color:#FDF8F0;border-radius:99px;font-size:10px;padding:1px 6px;margin-top:3px;}
 
-/* Extras */
-.extra-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px;}
-.extra-btn{padding:14px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:14px;font-weight:500;color:var(--text);text-align:center;line-height:1.3;-webkit-tap-highlight-color:transparent;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;}
-.extra-btn:active{transform:scale(.95);}
-.extra-btn.has-records{border-color:var(--extra);color:var(--extra);background:var(--extra-bg);}
-.extra-btn .badge{display:inline-block;background:var(--extra);color:#FDF8F0;border-radius:99px;font-size:10px;padding:1px 8px;}
-
-/* Productos */
+/* PRODUCTOS */
 .product-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
-.product-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);}
-.product-emoji{font-size:18px;width:24px;text-align:center;flex-shrink:0;}
-.product-name{flex:1;font-size:14px;color:var(--text);}
-.qty-controls{display:flex;align-items:center;gap:10px;}
-.qty-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;-webkit-tap-highlight-color:transparent;}
-.qty-btn:active{transform:scale(.88);}
-.qty-num{width:28px;text-align:center;font-size:15px;font-weight:600;color:var(--text);}
+.product-row{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);}
+.product-emoji{font-size:17px;width:22px;text-align:center;flex-shrink:0;}
+.product-name{flex:1;font-size:13px;color:var(--text);}
+.qty-controls{display:flex;align-items:center;gap:9px;}
+.qty-btn{width:30px;height:30px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.qty-btn:active{transform:scale(.86);}
+.qty-num{width:26px;text-align:center;font-size:15px;font-weight:600;color:var(--text);}
 
-/* Botones */
-.btn-primary{width:100%;padding:14px;background:var(--accent);color:#FDF8F0;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent;}
-.btn-primary:active{transform:scale(.98);background:var(--accent-dark);}
-.btn-secondary{width:100%;padding:13px;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);font-size:15px;cursor:pointer;margin-bottom:10px;}
-.btn-danger{width:100%;padding:13px;background:var(--danger-bg);color:var(--danger);border:0.5px solid var(--danger);border-radius:var(--radius-sm);font-size:15px;cursor:pointer;margin-bottom:10px;}
+/* BOTONES */
+.btn-primary{width:100%;padding:13px;background:var(--accent);color:#FDF8F0;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:9px;-webkit-tap-highlight-color:transparent;}
+.btn-primary:active{background:var(--accent-dark);transform:scale(.98);}
+.btn-secondary{width:100%;padding:12px;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;margin-bottom:9px;}
+.btn-danger{width:100%;padding:12px;background:var(--danger-bg);color:var(--danger);border:0.5px solid var(--danger);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;margin-bottom:9px;}
 
-/* Historial días */
-.day-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
-.day-card{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.day-card:active{background:var(--surface2);}
-.day-card.today{border-color:var(--accent);}
-.day-name{font-size:14px;font-weight:500;color:var(--text);}
-.day-meta{font-size:12px;color:var(--text3);margin-top:2px;}
-.today-pill{font-size:10px;background:var(--accent);color:#FDF8F0;border-radius:99px;padding:2px 7px;margin-left:6px;vertical-align:middle;}
+/* RESUMEN */
+.summary-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+.summary-header{padding:10px 13px;background:var(--surface2);border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+.summary-room{font-size:13px;font-weight:600;color:var(--text);}
+.summary-time{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:3px;}
+.summary-actions{display:flex;gap:6px;}
+.icon-btn{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);-webkit-tap-highlight-color:transparent;}
+.icon-btn.danger{border-color:var(--danger);color:var(--danger);}
+.icon-btn:active{transform:scale(.88);}
+.summary-row{padding:7px 13px;display:flex;justify-content:space-between;font-size:13px;border-bottom:0.5px solid var(--border);}
+.summary-row:last-child{border-bottom:none;}
+.summary-row span:last-child{font-weight:600;color:var(--accent);}
+.stats-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.stat{background:var(--surface2);border-radius:var(--radius-sm);padding:11px 13px;}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:3px;}
+.stat-val{font-size:21px;font-weight:700;color:var(--text);}
+.empty-state{text-align:center;padding:36px 16px;color:var(--text3);font-size:13px;}
+.empty-state i{font-size:34px;display:block;margin-bottom:9px;}
+.readonly-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:var(--surface2);color:var(--text3);border:0.5px solid var(--border);border-radius:99px;padding:4px 10px;margin-bottom:12px;}
+.prev-info{font-size:12px;color:var(--text3);margin-bottom:13px;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);}
 
-/* Stats */
-.stats-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
-.stat{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;}
-.stat-label{font-size:11px;color:var(--text3);margin-bottom:4px;}
-.stat-val{font-size:22px;font-weight:700;color:var(--text);}
+/* CALENDARIO */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-nav button{width:34px;height:34px;border-radius:50%;border:0.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);font-size:18px;}
+.cal-title{font-size:15px;font-weight:600;color:var(--text);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:16px;}
+.cal-day-label{text-align:center;font-size:10px;font-weight:600;color:var(--text3);padding:4px 0;text-transform:uppercase;}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:500;color:var(--text);background:var(--surface);border:0.5px solid var(--border);-webkit-tap-highlight-color:transparent;position:relative;}
+.cal-day.empty{background:transparent;border-color:transparent;cursor:default;}
+.cal-day.has-data{border-color:var(--accent);color:var(--accent);}
+.cal-day.today{background:var(--accent);color:#FDF8F0;border-color:var(--accent);}
+.cal-day.selected{background:var(--accent-dark);color:#FDF8F0;border-color:var(--accent-dark);}
+.cal-day .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);position:absolute;bottom:3px;}
+.cal-day.today .dot,.cal-day.selected .dot{background:#FDF8F0;}
+.cal-selected-day{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:14px;}
+.cal-selected-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;}
 
-/* Tarjetas de registro con edición */
-.record-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
-.record-header{padding:10px 14px;background:var(--surface2);border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.record-room{font-size:14px;font-weight:600;color:var(--text);}
-.record-time{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px;}
-.record-actions{display:flex;gap:6px;margin-left:10px;}
-.action-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
-.action-btn.edit{color:var(--accent);}
-.action-btn.del{color:var(--danger);border-color:var(--danger);background:var(--danger-bg);}
-.action-btn:active{transform:scale(.88);}
-.record-row{padding:8px 14px;display:flex;justify-content:space-between;font-size:13px;border-bottom:0.5px solid var(--border);}
-.record-row:last-child{border-bottom:none;}
-.record-row span:last-child{font-weight:600;color:var(--accent);}
-
-.empty-state{text-align:center;padding:40px 16px;color:var(--text3);font-size:14px;}
-.empty-state i{font-size:36px;display:block;margin-bottom:10px;}
-.readonly-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#EAF7EF;color:var(--success);border:0.5px solid var(--success);border-radius:99px;padding:4px 10px;margin-bottom:14px;}
-.prev-info{font-size:12px;color:var(--text3);margin-bottom:14px;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);}
-.edit-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#FFF7F0;color:var(--accent);border:0.5px solid var(--accent);border-radius:99px;padding:4px 10px;margin-bottom:14px;}
-
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px);}
-.modal{background:var(--surface);border-radius:var(--radius);width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden;}
-.modal-header{padding:14px 16px;border-bottom:0.5px solid var(--border);font-size:15px;font-weight:600;}
-.modal-body{padding:16px;}
-.modal-footer{display:flex;gap:8px;padding:12px 16px;border-top:0.5px solid var(--border);}
-.modal-footer .btn-primary,.modal-footer .btn-secondary,.modal-footer .btn-danger{margin-bottom:0;}
-.room-select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.room-select-btn{padding:12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;font-size:14px;font-weight:500;text-align:center;-webkit-tap-highlight-color:transparent;}
-.room-select-btn:active{transform:scale(.95);}
-.room-select-btn.selected{background:var(--accent);color:#FDF8F0;border-color:var(--accent);}
-
-/* Calendario */
-.calendar-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:16px;}
-.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.cal-month{font-size:15px;font-weight:600;}
-.cal-nav-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);}
-.cal-nav-btn:active{transform:scale(.9);}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;}
-.cal-day-label{font-size:10px;font-weight:600;color:var(--text3);padding:4px 0;}
-.cal-day{padding:8px 2px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;position:relative;background:var(--surface2);border:0.5px solid transparent;-webkit-tap-highlight-color:transparent;}
-.cal-day:active{transform:scale(.95);}
-.cal-day.today{background:var(--accent);color:#FDF8F0;font-weight:600;}
-.cal-day.has-data{background:var(--success-bg);color:var(--success);border-color:var(--success);font-weight:600;}
-.cal-day.has-data.today{background:var(--accent);color:#FDF8F0;border-color:var(--accent);}
-.cal-day.selected{background:var(--accent-dark);color:#FDF8F0;font-weight:600;border-color:var(--accent-dark);}
-.cal-day.other-month{color:var(--text3);opacity:.5;}
-.cal-day .dot{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:currentColor;}
-
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:var(--surface);padding:10px 20px;border-radius:99px;font-size:13px;font-weight:500;z-index:999;transition:transform .3s;pointer-events:none;}
-.toast.show{transform:translateX(-50%) translateY(0);}
-
-/* Selector Exportación */
-.export-box{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px;}
-.select-style{width:100%;padding:10px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;margin-bottom:10px;}
-.date-range-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.date-range-inputs input{padding:10px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-family:inherit;font-size:13px;width:100%;}
+/* EXPORTAR */
+.export-section{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.export-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px;}
+.export-tabs{display:flex;border:0.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:14px;}
+.export-tab{flex:1;padding:9px 4px;background:var(--surface);border:none;cursor:pointer;font-size:12px;font-weight:500;color:var(--text3);font-family:inherit;text-align:center;}
+.export-tab.active{background:var(--accent);color:#FDF8F0;}
+.export-range{display:none;}.export-range.active{display:block;}
+.week-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.week-nav button{width:30px;height:30px;border-radius:50%;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);font-size:16px;}
+.week-label{flex:1;text-align:center;font-size:12px;color:var(--text2);font-weight:500;}
+.month-sel{width:100%;padding:9px 12px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;font-family:inherit;margin-bottom:10px;}
+.export-preview{font-size:12px;color:var(--text3);margin-bottom:12px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm);}
 </style>
 </head>
 <body>
@@ -159,108 +129,104 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
     <div class="logo"><i class="ti ti-coffee"></i></div>
     <div class="header-text">
       <div class="title">Control de bebestibles</div>
-      <div class="sub">Cafetería — registra por sala, extras y turno</div>
+      <div class="sub" id="header-date"></div>
     </div>
   </div>
+
   <div class="content">
 
-    <div class="step active" id="step-main">
-      <div class="tabs">
-        <button class="tab-btn active" id="tab-hoy" onclick="setTab('hoy')"><i class="ti ti-calendar-today"></i> Hoy</button>
-        <button class="tab-btn" id="tab-hist" onclick="setTab('hist')"><i class="ti ti-history"></i> Historial</button>
+    <!-- PÁGINA: HOY -->
+    <div class="page active" id="page-hoy">
+      <div class="section-label">Salas</div>
+      <div class="room-grid" id="room-grid-hoy"></div>
+      <div class="section-label-auditorio">Auditorios</div>
+      <div class="auditorio-grid" id="auditorio-grid-hoy"></div>
+      <div class="section-label-auditorio">Consumo personal Interno</div>
+      <div id="extras-grid-hoy" style="margin-bottom:16px;"></div>
+      <button class="btn-primary" onclick="verResumenHoy()"><i class="ti ti-table-export"></i> Ver resumen de hoy</button>
+    </div>
+
+    <!-- PÁGINA: RESUMEN HOY -->
+    <div class="page" id="page-resumen-hoy">
+      <button class="nav-back" onclick="showPage('hoy')"><i class="ti ti-arrow-left"></i> Salas</button>
+      <div class="section-label">Resumen de hoy</div>
+      <div class="stats-bar" id="stats-hoy"></div>
+      <div id="list-hoy"></div>
+      <button class="btn-primary" onclick="irExportar()"><i class="ti ti-download"></i> Exportar Excel</button>
+    </div>
+
+    <!-- PÁGINA: EDITAR REGISTRO -->
+    <div class="page" id="page-editar">
+      <button class="nav-back" id="edit-back-btn"><i class="ti ti-arrow-left"></i> <span id="edit-back-label">Atrás</span></button>
+      <div class="section-label" id="edit-label">Editando</div>
+      <div class="prev-info" id="edit-info"></div>
+      <div class="product-list" id="edit-product-list"></div>
+      <button class="btn-primary" onclick="guardarEdicion()"><i class="ti ti-device-floppy"></i> Guardar cambios</button>
+      <button class="btn-secondary" id="edit-cancel-btn">Cancelar</button>
+    </div>
+
+    <!-- PÁGINA: NUEVO REGISTRO -->
+    <div class="page" id="page-nuevo">
+      <button class="nav-back" onclick="showPage('hoy')"><i class="ti ti-arrow-left"></i> Volver</button>
+      <div class="section-label" id="nuevo-label">Nuevo registro</div>
+      <div class="prev-info" id="nuevo-info"></div>
+      <div class="product-list" id="nuevo-product-list"></div>
+      <button class="btn-primary" onclick="guardarNuevo()"><i class="ti ti-device-floppy"></i> Guardar registro</button>
+      <button class="btn-secondary" onclick="showPage('hoy')">Cancelar</button>
+    </div>
+
+    <!-- PÁGINA: CALENDARIO -->
+    <div class="page" id="page-calendario">
+      <div class="section-label">Historial de registros</div>
+      <div class="cal-nav">
+        <button onclick="calPrev()"><i class="ti ti-chevron-left"></i></button>
+        <span class="cal-title" id="cal-title"></span>
+        <button onclick="calNext()"><i class="ti ti-chevron-right"></i></button>
       </div>
-      <div id="view-hoy">
-        <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:14px;" id="today-date"></div>
-        <div class="section-label">Salas</div>
-        <div class="room-grid" id="room-grid-hoy"></div>
-        <div class="section-label">Extras (Consumo personal)</div>
-        <div class="extra-grid" id="extra-grid-hoy"></div>
-        <button class="btn-primary" onclick="goSummaryDay(todayKey(),false)"><i class="ti ti-table-export"></i> Ver resumen de hoy</button>
-      </div>
-      <div id="view-hist" style="display:none;">
-        <div class="section-label">Herramientas de Exportación</div>
-        <div class="export-box">
-          <label class="section-label" style="margin-bottom:4px; display:block;">Periodo del Reporte Excel</label>
-          <select id="export-period" class="select-style" onchange="toggleCustomDates()">
-            <option value="day">Sólo el día seleccionado</option>
-            <option value="week">Semana actual (Lunes a Domingo)</option>
-            <option value="month">Mes actual</option>
-            <option value="custom">Rango personalizado...</option>
-          </select>
-          <div id="custom-date-inputs" class="date-range-inputs" style="display:none;">
-            <div>
-              <span class="section-label" style="font-size:10px;">Desde</span>
-              <input type="date" id="export-from">
-            </div>
-            <div>
-              <span class="section-label" style="font-size:10px;">Hasta</span>
-              <input type="date" id="export-to">
-            </div>
-          </div>
-          <button class="btn-primary" onclick="exportBulkExcel()" style="margin-bottom:0; background:var(--extra);"><i class="ti ti-file-spreadsheet"></i> Descargar Reporte Consolidado</button>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div id="cal-day-detail" style="display:none;">
+        <div class="cal-selected-day">
+          <div class="cal-selected-title" id="cal-detail-title"></div>
+          <div id="cal-detail-list"></div>
         </div>
+      </div>
+      <div id="cal-empty" class="empty-state"><i class="ti ti-touch"></i>Toca un día para ver sus registros.</div>
+    </div>
 
-        <div class="section-label">Calendario</div>
-        <div class="calendar-wrap" id="calendar-wrap"></div>
-        <div class="section-label">Días con registros</div>
-        <div class="day-list" id="day-list"></div>
-        <div id="no-hist" class="empty-state" style="display:none;"><i class="ti ti-calendar-off"></i>No hay días anteriores guardados aún.</div>
+    <!-- PÁGINA: EXPORTAR -->
+    <div class="page" id="page-exportar">
+      <div class="section-label">Exportar a Excel</div>
+      <div class="export-section">
+        <div class="export-title"><i class="ti ti-calendar"></i> Selecciona el período</div>
+        <div class="export-tabs">
+          <button class="export-tab active" onclick="setExportTab('dia')">Día</button>
+          <button class="export-tab" onclick="setExportTab('semana')">Semana</button>
+          <button class="export-tab" onclick="setExportTab('mes')">Mes</button>
+        </div>
+        <div class="export-range active" id="exp-dia">
+          <input type="date" id="exp-dia-input" style="width:100%;padding:9px 12px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;font-family:inherit;margin-bottom:10px;" onchange="updateExportPreview()">
+        </div>
+        <div class="export-range" id="exp-semana">
+          <div class="week-nav">
+            <button onclick="semanaNav(-1)"><i class="ti ti-chevron-left"></i></button>
+            <div class="week-label" id="week-label">Cargando...</div>
+            <button onclick="semanaNav(1)"><i class="ti ti-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="export-range" id="exp-mes">
+          <select class="month-sel" id="exp-mes-select" onchange="updateExportPreview()"></select>
+        </div>
+        <div class="export-preview" id="export-preview">Selecciona un período.</div>
+        <button class="btn-primary" onclick="doExport()"><i class="ti ti-download"></i> Descargar Excel</button>
       </div>
     </div>
 
-    <div class="step" id="step-products">
-      <button class="nav-back" onclick="cancelEdit()"><i class="ti ti-arrow-left"></i> Volver</button>
-      <div id="edit-badge-wrap"></div>
-      <div class="section-label" id="prod-label">Sala X — Nuevo registro</div>
-      <div class="prev-info" id="room-prev-info"></div>
-      <div class="product-list" id="product-list"></div>
-      <button class="btn-primary" onclick="saveRoom()"><i class="ti ti-device-floppy"></i> <span id="save-btn-label">Guardar registro</span></button>
-      <button class="btn-secondary" onclick="cancelEdit()">Cancelar</button>
-    </div>
-
-    <div class="step" id="step-summary">
-      <button class="nav-back" onclick="backFromSummary()"><i class="ti ti-arrow-left"></i> <span id="back-label">Atrás</span></button>
-      <div class="section-label" id="summary-title">Resumen</div>
-      <div id="readonly-indicator"></div>
-      <div class="stats-bar" id="stats-bar"></div>
-      
-      <div id="history-add-actions" style="margin-bottom:14px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-         <button class="btn-secondary" onclick="openRoomFromHistory()" style="margin-bottom:0; padding:10px; font-size:13px;"><i class="ti ti-plus"></i> Añadir Sala</button>
-         <button class="btn-secondary" onclick="openExtraFromHistory()" style="margin-bottom:0; padding:10px; font-size:13px;"><i class="ti ti-plus"></i> Añadir Extras</button>
-      </div>
-
-      <div id="summary-list"></div>
-      <button class="btn-primary" onclick="exportExcel()"><i class="ti ti-download"></i> Exportar este día (.xlsx)</button>
-      <button class="btn-danger" id="btn-clear" onclick="clearDay()"><i class="ti ti-trash"></i> Limpiar registros de este día</button>
-    </div>
-
   </div>
-</div>
-<div class="toast" id="toast"></div>
 
-<div id="modal-room" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeRoomModal()">
-  <div class="modal">
-    <div class="modal-header"><i class="ti ti-door"></i> Cambiar sala del registro</div>
-    <div class="modal-body">
-      <div class="section-label">Selecciona la nueva sala</div>
-      <div class="room-select-grid" id="room-select-grid"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeRoomModal()">Cancelar</button>
-      <button class="btn-primary" onclick="confirmChangeRoom()">Confirmar cambio</button>
-    </div>
-  </div>
-</div>
-
-<div id="modal-add-history-room" class="modal-overlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
-  <div class="modal">
-    <div class="modal-header"><i class="ti ti-plus"></i> Selecciona la Sala a agregar</div>
-    <div class="modal-body">
-      <div class="room-select-grid" id="history-room-grid"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="document.getElementById('modal-add-history-room').style.display='none'">Cancelar</button>
-    </div>
+  <div class="bottom-nav">
+    <button class="nav-item active" id="nav-hoy" onclick="showPage('hoy')"><i class="ti ti-layout-grid"></i>Hoy</button>
+    <button class="nav-item" id="nav-calendario" onclick="showPage('calendario')"><i class="ti ti-calendar"></i>Historial</button>
+    <button class="nav-item" id="nav-exportar" onclick="showPage('exportar')"><i class="ti ti-download"></i>Exportar</button>
   </div>
 </div>
 
@@ -280,843 +246,651 @@ const PRODUCTS = [
   {id:'jugo_pina',    name:'Jugo de piña',         emoji:'🍍'},
   {id:'jugo_frutilla',name:'Jugo de frutilla',     emoji:'🍓'},
 ];
-const ROOMS = 15;
+
+// Salas normales (1–15) + auditorios
+const ROOMS = [
+  {id:'sala_1',  label:'Sala 1',       tipo:'sala'},
+  {id:'sala_2',  label:'Sala 2',       tipo:'sala'},
+  {id:'sala_3',  label:'Sala 3',       tipo:'sala'},
+  {id:'sala_4',  label:'Sala 4',       tipo:'sala'},
+  {id:'sala_5',  label:'Sala 5',       tipo:'sala'},
+  {id:'sala_6',  label:'Sala 6',       tipo:'sala'},
+  {id:'sala_7',  label:'Sala 7',       tipo:'sala'},
+  {id:'sala_8',  label:'Sala 8',       tipo:'sala'},
+  {id:'sala_9',  label:'Sala 9',       tipo:'sala'},
+  {id:'sala_10', label:'Sala 10',      tipo:'sala'},
+  {id:'sala_11', label:'Sala 11',      tipo:'sala'},
+  {id:'sala_12', label:'Sala 12',      tipo:'sala'},
+  {id:'sala_13', label:'Sala 13',      tipo:'sala'},
+  {id:'sala_14', label:'Sala 14',      tipo:'sala'},
+  {id:'sala_15', label:'Sala 15',      tipo:'sala'},
+  {id:'aud_1',   label:'Auditorio 1',  tipo:'auditorio'},
+  {id:'aud_2',   label:'Auditorio 2',  tipo:'auditorio'},
+  {id:'aud_3',   label:'Auditorio 3',  tipo:'auditorio'},
+  {id:'extras',  label:'Extras',       tipo:'extras'},
+];
 // ============================================================
 
-const PREFIX = 'cafe_v2_';
-function todayKey(){ return PREFIX + new Date().toISOString().slice(0,10); }
-function dateFromKey(k){ return k.replace(PREFIX,''); }
+const PREFIX = 'cafe_v3_';
 
-// Estado de edición
-let currentRoom = null;
-let isExtra = false;
-let tempQty = {};
-let editingDay = null;   // key del día que se edita
-let editingRecordIdx = null; // índice del registro dentro de sala_X, null = nuevo
-let viewingDay = null;
-let comingFromHist = false;
-
-// Estado modal cambio de sala
-let modalTargetDay = null;
-let modalTargetSalaKey = null;
-let modalTargetIdx = null;
-let modalSelectedRoom = null;
-
-// Estado calendario
-let calCurrentDate = new Date();
-let calSelectedDate = null;
-
-function loadDay(key){ try{ const s=localStorage.getItem(key); return s?JSON.parse(s):{}; }catch(e){ return {}; } }
-function persistDay(key,data){ try{ localStorage.setItem(key,JSON.stringify(data)); }catch(e){} }
-function allDayKeys(){
-  const keys=[];
-  for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.startsWith(PREFIX)) keys.push(k); }
-  return keys.sort().reverse();
+function todayISO()    { return new Date().toISOString().slice(0,10); }
+function keyFor(iso)   { return PREFIX + iso; }
+function isoFromKey(k) { return k.replace(PREFIX,''); }
+function loadDay(iso)  { try{const s=localStorage.getItem(keyFor(iso));return s?JSON.parse(s):{};}catch(e){return{};} }
+function saveDay(iso,d){ try{localStorage.setItem(keyFor(iso),JSON.stringify(d));}catch(e){} }
+function removeDay(iso){ localStorage.removeItem(keyFor(iso)); }
+function allISOs(){
+  const r=[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PREFIX))r.push(isoFromKey(k));}
+  return r.filter(Boolean).sort().reverse();
 }
-function fmtDateFromISO(iso){ const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
-function fmtTime(iso){ return new Date(iso).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}); }
-
-// Toast
-let toastTimer;
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+function fmtISO(iso){
+  return new Date(iso+'T12:00:00').toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
+function fmtTime(ts){ return new Date(ts).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}); }
+function countRegs(data){ return Object.values(data).reduce((s,r)=>s+(Array.isArray(r)?r.length:0),0); }
+function totalUnits(data){
+  let t=0;
+  Object.values(data).forEach(recs=>{
+    if(!Array.isArray(recs))return;
+    recs.forEach(r=>{ PRODUCTS.forEach(p=>{ t+=(r.productos&&r.productos[p.id])||0; }); });
+  });
+  return t;
+}
+function getRoomById(id){ return ROOMS.find(r=>r.id===id)||{id,label:id,tipo:'sala'}; }
 
-document.getElementById('today-date').textContent = fmtDateFromISO(new Date().toISOString().slice(0,10));
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+let editCtx=null, nuevoCtx=null;
+let calYear, calMonth, calSelectedISO=null;
+let exportTab='dia', semanaOffset=0;
 
-// Inicializar fechas por defecto en los inputs de rango
-const hoyStr = new Date().toISOString().slice(0,10);
-document.getElementById('export-from').value = hoyStr;
-document.getElementById('export-to').value = hoyStr;
+const ALL_PAGES=['hoy','resumen-hoy','editar','nuevo','calendario','exportar'];
+const NAV_MAP={'hoy':'nav-hoy','calendario':'nav-calendario','exportar':'nav-exportar'};
 
-function toggleCustomDates(){
-  const period = document.getElementById('export-period').value;
-  document.getElementById('custom-date-inputs').style.display = (period === 'custom') ? 'grid' : 'none';
+function showPage(name){
+  ALL_PAGES.forEach(p=>document.getElementById('page-'+p).classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  Object.entries(NAV_MAP).forEach(([p,nid])=>{
+    document.getElementById(nid).classList.toggle('active', p===name);
+  });
+  if(name==='hoy')        renderRoomsHoy();
+  if(name==='resumen-hoy')renderResumenHoy();
+  if(name==='calendario') renderCalendario();
+  if(name==='exportar')   initExportar();
 }
 
-function showStep(name){
-  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-  document.getElementById('step-'+name).classList.add('active');
-  if(name==='main'){ renderRoomsHoy(); renderExtrasHoy(); renderHistorial(); }
-}
+// Header fecha
+document.getElementById('header-date').textContent = fmtISO(todayISO());
 
-function setTab(t){
-  document.getElementById('tab-hoy').classList.toggle('active',t==='hoy');
-  document.getElementById('tab-hist').classList.toggle('active',t==='hist');
-  document.getElementById('view-hoy').style.display=t==='hoy'?'block':'none';
-  document.getElementById('view-hist').style.display=t==='hist'?'block':'none';
-  if(t==='hist'){ renderCalendar(); renderHistorial(); }
-}
-
+// ============================================================
+// PÁGINA HOY
+// ============================================================
 function renderRoomsHoy(){
-  const data=loadDay(todayKey());
-  const g=document.getElementById('room-grid-hoy');
-  g.innerHTML='';
-  for(let i=1; i<=ROOMS; i++){
-    const records=data['sala_'+i]||[];
-    const b=document.createElement('button');
+  const data = loadDay(todayISO());
+  const salas  = ROOMS.filter(r=>r.tipo==='sala');
+  const audits = ROOMS.filter(r=>r.tipo==='auditorio');
+  // Salas
+  const gSala = document.getElementById('room-grid-hoy');
+  gSala.innerHTML='';
+  salas.forEach(room=>{
+    const records = data[room.id]||[];
+    const b = document.createElement('button');
     b.className='room-btn'+(records.length>0?' has-records':'');
-    b.innerHTML='Sala '+i+(records.length>0?`<br><span class="badge">${records.length} reg.</span>`:'')+(records.length>0?'<span class="edit-hint"><i class="ti ti-pencil"></i></span>':'');
-    b.onclick=()=>openRoom(i, todayKey());
-    g.appendChild(b);
+    b.innerHTML = room.label + (records.length>0?`<br><span class="badge">${records.length} reg.</span>`:'');
+    b.onclick = ()=>abrirNuevo(room.id);
+    gSala.appendChild(b);
+  });
+
+  // Auditorios
+  const gAud = document.getElementById('auditorio-grid-hoy');
+  gAud.innerHTML='';
+  audits.forEach(room=>{
+    const records = data[room.id]||[];
+    const b = document.createElement('button');
+    b.className='room-btn auditorio'+(records.length>0?' has-records':'');
+    b.innerHTML = room.label + (records.length>0?`<br><span class="badge">${records.length} reg.</span>`:'');
+    b.onclick = ()=>abrirNuevo(room.id);
+    gAud.appendChild(b);
+  });
+
+  // Extras (consumo personal)
+  const extrasRoom = ROOMS.find(r=>r.tipo==='extras');
+  const gExtras = document.getElementById('extras-grid-hoy');
+  gExtras.innerHTML='';
+  if(extrasRoom){
+    const records = data[extrasRoom.id]||[];
+    const b = document.createElement('button');
+    b.className='room-btn extras'+(records.length>0?' has-records':'');
+    b.style.width='100%';
+    b.style.padding='13px 16px';
+    b.style.display='flex';
+    b.style.alignItems='center';
+    b.style.justifyContent='space-between';
+    b.style.textAlign='left';
+    b.style.fontSize='14px';
+    const badge = records.length>0?`<span class="badge" style="background:#1A7F4B;">${records.length} reg.</span>`:'';
+    b.innerHTML=`<span><i class="ti ti-user" style="margin-right:6px;"></i>${extrasRoom.label} — Consumo personal</span>${badge}`;
+    b.onclick = ()=>abrirNuevo(extrasRoom.id);
+    gExtras.appendChild(b);
   }
 }
+renderRoomsHoy();
 
-function renderExtrasHoy(){
-  const data=loadDay(todayKey());
-  const records=data['extras']||[];
-  const g=document.getElementById('extra-grid-hoy');
-  g.innerHTML='';
-  const b=document.createElement('button');
-  b.className='extra-btn'+(records.length>0?' has-records':'');
-  b.innerHTML='<i class="ti ti-users"></i> Extras (Consumo personal)'+(records.length>0?` <span class="badge">${records.length} reg.</span>`:'');
-  b.onclick=()=>openExtra(todayKey());
-  g.appendChild(b);
+function abrirNuevo(roomId){
+  nuevoCtx = {roomId};
+  const room = getRoomById(roomId);
+  const data = loadDay(todayISO());
+  const prev = (data[roomId]||[]).length;
+  document.getElementById('nuevo-label').textContent = room.label + ' — Nuevo registro';
+  document.getElementById('nuevo-info').textContent = prev===0
+    ? 'Primer registro del día para este espacio.'
+    : `Este espacio ya tiene ${prev} registro${prev>1?'s':''} hoy. Este será independiente.`;
+  renderProductList('nuevo-product-list', {}, 'nq-');
+  showPage('nuevo');
 }
 
-function renderCalendar(){
-  const wrap = document.getElementById('calendar-wrap');
-  const year = calCurrentDate.getFullYear();
-  const month = calCurrentDate.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Ajuste para que empiece en Lunes
-  const daysInMonth = lastDay.getDate();
-  const prevMonthLastDay = new Date(year, month, 0).getDate();
+function guardarNuevo(){
+  const qty={};
+  PRODUCTS.forEach(p=>{
+    const el=document.getElementById('nq-'+p.id);
+    qty[p.id]=el?parseInt(el.textContent)||0:0;
+  });
+  if(!Object.values(qty).some(v=>v>0)){alert('Agrega al menos un producto.');return;}
+  const iso=todayISO();
+  const data=loadDay(iso);
+  if(!data[nuevoCtx.roomId]) data[nuevoCtx.roomId]=[];
+  data[nuevoCtx.roomId].push({ts:new Date().toISOString(), productos:{...qty}});
+  saveDay(iso,data);
+  showPage('hoy');
+}
 
-  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const dayNames = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+function verResumenHoy(){ showPage('resumen-hoy'); }
 
-  const keys = allDayKeys();
-  const daysWithData = new Set();
-  keys.forEach(k => {
-    const d = dateFromKey(k);
-    const dk = new Date(d+'T12:00:00');
-    if(dk.getFullYear() === year && dk.getMonth() === month){
-      daysWithData.add(dk.getDate());
+function renderResumenHoy(){
+  const iso=todayISO();
+  const data=loadDay(iso);
+  renderResumenDia(iso, data, 'stats-hoy', 'list-hoy', true, 'resumen-hoy');
+}
+
+// ============================================================
+// RENDER RESUMEN DÍA (reutilizable)
+// ============================================================
+function renderResumenDia(iso, data, statsId, listId, editable, fromPage){
+  const regs=countRegs(data), units=totalUnits(data);
+
+  if(statsId && document.getElementById(statsId)){
+    document.getElementById(statsId).innerHTML=`
+      <div class="stat"><div class="stat-label">Registros</div><div class="stat-val">${regs}</div></div>
+      <div class="stat"><div class="stat-label">Unidades totales</div><div class="stat-val">${units}</div></div>`;
+  }
+
+  const listEl=document.getElementById(listId);
+  if(!listEl)return;
+
+  // Recolectar todos los registros
+  const allRecs=[];
+  Object.keys(data).forEach(roomId=>{
+    (data[roomId]||[]).forEach((r,idx)=>{
+      allRecs.push({roomId, idx, ts:r.ts, productos:r.productos||{}});
+    });
+  });
+
+  if(allRecs.length===0){
+    listEl.innerHTML='<div class="empty-state"><i class="ti ti-mood-empty"></i>Sin registros.</div>';
+    return;
+  }
+
+  // Ordenar: por tipo (salas primero) luego número/nombre, luego hora
+  allRecs.sort((a,b)=>{
+    const ra=getRoomById(a.roomId), rb=getRoomById(b.roomId);
+    const orden={sala:0,auditorio:1,extras:2};
+    const oa=orden[ra.tipo]??3, ob=orden[rb.tipo]??3;
+    if(oa!==ob) return oa-ob;
+    return ra.label.localeCompare(rb.label,'es',{numeric:true})||a.ts.localeCompare(b.ts);
+  });
+
+  let html='';
+  allRecs.forEach(r=>{
+    const room=getRoomById(r.roomId);
+    const items=PRODUCTS.filter(p=>(r.productos[p.id]||0)>0);
+    const editBtns=editable?`
+      <div class="summary-actions">
+        <button class="icon-btn" title="Editar" onclick="abrirEditar('${iso}','${r.roomId}',${r.idx},'${fromPage}')"><i class="ti ti-pencil"></i></button>
+        <button class="icon-btn danger" title="Eliminar" onclick="eliminarRegistro('${iso}','${r.roomId}',${r.idx},'${fromPage}')"><i class="ti ti-trash"></i></button>
+      </div>`:'';
+    html+=`<div class="summary-card">
+      <div class="summary-header">
+        <span class="summary-room">${room.label}</span>
+        <span class="summary-time"><i class="ti ti-clock"></i> ${fmtTime(r.ts)}</span>
+        ${editBtns}
+      </div>`;
+    if(items.length===0){
+      html+=`<div class="summary-row"><span style="color:var(--text3)">Sin productos registrados</span></div>`;
+    } else {
+      items.forEach(p=>{
+        html+=`<div class="summary-row"><span>${p.emoji} ${p.name}</span><span>${r.productos[p.id]}</span></div>`;
+      });
     }
+    html+='</div>';
   });
-
-  const today = new Date();
-  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-  const todayDate = today.getDate();
-
-  let html = '<div class="cal-header">';
-  html += '<button class="cal-nav-btn" onclick="changeCalMonth(-1)"><i class="ti ti-chevron-left"></i></button>';
-  html += '<span class="cal-month">'+monthNames[month]+' '+year+'</span>';
-  html += '<button class="cal-nav-btn" onclick="changeCalMonth(1)"><i class="ti ti-chevron-right"></i></button>';
-  html += '</div>';
-  html += '<div class="cal-grid">';
-  dayNames.forEach(d => html += '<div class="cal-day-label">'+d+'</div>');
-
-  for(let i = startDay - 1; i >= 0; i--){
-    html += '<div class="cal-day other-month">'+(prevMonthLastDay - i)+'</div>';
-  }
-
-  for(let d = 1; d <= daysInMonth; d++){
-    const isToday = isCurrentMonth && d === todayDate;
-    const hasData = daysWithData.has(d);
-    const isSelected = calSelectedDate && calSelectedDate.getFullYear() === year && calSelectedDate.getMonth() === month && calSelectedDate.getDate() === d;
-    let cls = 'cal-day';
-    if(isToday) cls += ' today';
-    if(hasData) cls += ' has-data';
-    if(isSelected) cls += ' selected';
-    html += '<div class="'+cls+'" onclick="selectCalDate('+year+','+month+','+d+')">'+d+(hasData?'<span class="dot"></span>':'')+'</div>';
-  }
-
-  const totalCells = startDay + daysInMonth;
-  const remainingCells = 42 - totalCells;
-  for(let d = 1; d <= remainingCells; d++){
-    html += '<div class="cal-day other-month">'+d+'</div>';
-  }
-
-  html += '</div>';
-  wrap.innerHTML = html;
+  listEl.innerHTML=html;
 }
 
-function changeCalMonth(delta){
-  calCurrentDate.setMonth(calCurrentDate.getMonth() + delta);
-  renderCalendar();
+// ============================================================
+// EDITAR / ELIMINAR
+// ============================================================
+function abrirEditar(iso, roomId, idx, fromPage){
+  const data=loadDay(iso);
+  const reg=(data[roomId]||[])[idx];
+  if(!reg){alert('Registro no encontrado.');return;}
+  editCtx={iso,roomId,idx,fromPage};
+  const room=getRoomById(roomId);
+  document.getElementById('edit-label').textContent=`Editando ${room.label} — ${fmtTime(reg.ts)}`;
+  document.getElementById('edit-info').textContent=`Registro del ${fmtISO(iso)}. Modifica las cantidades y guarda.`;
+  document.getElementById('edit-back-btn').onclick=()=>volverDe(fromPage);
+  document.getElementById('edit-cancel-btn').onclick=()=>volverDe(fromPage);
+  renderProductList('edit-product-list', reg.productos||{}, 'eq-');
+  showPage('editar');
 }
 
-function selectCalDate(year, month, day){
-  const mm = String(month + 1).padStart(2, '0');
-  const dd = String(day).padStart(2, '0');
-  const key = PREFIX + `${year}-${mm}-${dd}`;
-  calSelectedDate = new Date(year, month, day);
-  renderCalendar();
-  goSummaryDay(key, true);
-}
-
-function renderHistorial(){
-  const keys=allDayKeys();
-  const tk=todayKey();
-  const list=document.getElementById('day-list');
-  const noHist=document.getElementById('no-hist');
-  list.innerHTML='';
-  
-  const todayData=loadDay(tk);
-  const todayRegs=Object.values(todayData).reduce((s,r)=>s+(r?r.length:0),0);
-  const todayCard=document.createElement('div');
-  todayCard.className='day-card today';
-  todayCard.innerHTML=`<div><div class="day-name">Hoy <span class="today-pill">HOY</span></div><div class="day-meta">${todayRegs} registro${todayRegs!==1?'s':''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
-  todayCard.onclick=()=>goSummaryDay(tk,false);
-  list.appendChild(todayCard);
-  
-  const hist=keys.filter(k=>k!==tk);
-  if(hist.length===0 && todayRegs===0){ noHist.style.display='block'; } else { noHist.style.display='none'; }
-  
-  hist.forEach(k=>{
-    const d=loadDay(k);
-    const regs=Object.values(d).reduce((s,r)=>s+(r?r.length:0),0);
-    const card=document.createElement('div');
-    card.className='day-card';
-    card.innerHTML=`<div><div class="day-name">${fmtDateFromISO(dateFromKey(k))}</div><div class="day-meta">${regs} registro${regs!==1?'s':''}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i>`;
-    card.onclick=()=>goSummaryDay(k,true);
-    list.appendChild(card);
+function guardarEdicion(){
+  const qty={};
+  PRODUCTS.forEach(p=>{
+    const el=document.getElementById('eq-'+p.id);
+    qty[p.id]=el?parseInt(el.textContent)||0:0;
   });
+  if(!Object.values(qty).some(v=>v>0)){alert('Debe quedar al menos un producto.');return;}
+  const {iso,roomId,idx,fromPage}=editCtx;
+  const data=loadDay(iso);
+  data[roomId][idx].productos={...qty};
+  saveDay(iso,data);
+  volverDe(fromPage);
 }
 
-function openRoom(n, targetDayKey){
-  currentRoom=n;
-  isExtra=false;
-  editingDay=targetDayKey;
-  editingRecordIdx=null;
-  tempQty={};
-  PRODUCTS.forEach(p=>{ tempQty[p.id]=0; });
-  const data=loadDay(targetDayKey);
-  const prev=(data['sala_'+n]||[]).length;
-  document.getElementById('prod-label').textContent='Sala '+n+' — Nuevo registro';
-  document.getElementById('room-prev-info').textContent=prev===0
-    ?'Primer registro del día para esta sala.'
-    :`Esta sala ya tiene ${prev} registro${prev>1?'s':''}. Este será uno nuevo e independiente.`;
-  document.getElementById('edit-badge-wrap').innerHTML='';
-  document.getElementById('save-btn-label').textContent='Guardar registro';
-  renderProducts();
-  showStep('products');
+function eliminarRegistro(iso, roomId, idx, fromPage){
+  if(!confirm('¿Eliminar este registro?'))return;
+  const data=loadDay(iso);
+  if(data[roomId]) data[roomId].splice(idx,1);
+  if(!data[roomId]||data[roomId].length===0) delete data[roomId];
+  if(Object.keys(data).length===0) removeDay(iso);
+  else saveDay(iso,data);
+  volverDe(fromPage);
 }
 
-function openExtra(targetDayKey){
-  currentRoom=null;
-  isExtra=true;
-  editingDay=targetDayKey;
-  editingRecordIdx=null;
-  tempQty={};
-  PRODUCTS.forEach(p=>{ tempQty[p.id]=0; });
-  const data=loadDay(targetDayKey);
-  const prev=(data['extras']||[]).length;
-  document.getElementById('prod-label').textContent='Extras — Consumo del personal';
-  document.getElementById('room-prev-info').textContent=prev===0
-    ?'Primer registro de extras del día.'
-    :`Ya hay ${prev} registro${prev>1?'s':''} de extras. Este será uno nuevo e independiente.`;
-  document.getElementById('edit-badge-wrap').innerHTML='';
-  document.getElementById('save-btn-label').textContent='Guardar registro';
-  renderProducts();
-  showStep('products');
+function volverDe(fromPage){
+  if(fromPage==='resumen-hoy') renderResumenHoy();
+  if(fromPage==='calendario')  renderCalendarioDia(calSelectedISO);
+  showPage(fromPage);
 }
 
-// Métodos para agregar directo desde la vista del Historial
-function openRoomFromHistory(){
-  const grid = document.getElementById('history-room-grid');
-  grid.innerHTML = '';
-  for(let i=1; i<=ROOMS; i++){
-     const btn = document.createElement('button');
-     btn.className = 'room-select-btn';
-     btn.textContent = 'Sala ' + i;
-     btn.onclick = () => {
-         document.getElementById('modal-add-history-room').style.display = 'none';
-         openRoom(i, viewingDay);
-     };
-     grid.appendChild(btn);
-  }
-  document.getElementById('modal-add-history-room').style.display = 'flex';
-}
-
-function openExtraFromHistory(){
-  openExtra(viewingDay);
-}
-
-function editRecord(dayKey, salaKey, idx){
-  const data=loadDay(dayKey);
-  const record=data[salaKey][idx];
-  isExtra = (salaKey === 'extras');
-  currentRoom = isExtra ? null : parseInt(salaKey.replace('sala_',''));
-  editingDay=dayKey;
-  editingRecordIdx=idx;
-  tempQty={...record.productos};
-  PRODUCTS.forEach(p=>{ if(tempQty[p.id]===undefined) tempQty[p.id]=0; });
-  if(isExtra){
-    document.getElementById('prod-label').textContent='Extras — Editando registro';
-  } else {
-    document.getElementById('prod-label').textContent='Sala '+currentRoom+' — Editando registro';
-  }
-  document.getElementById('room-prev-info').textContent='Modifica las cantidades y guarda. El horario original se conserva.';
-  document.getElementById('edit-badge-wrap').innerHTML='<div class="edit-badge"><i class="ti ti-pencil" style="font-size:13px"></i> Editando registro de las '+fmtTime(record.ts)+'</div>';
-  document.getElementById('save-btn-label').textContent='Guardar cambios';
-  renderProducts();
-  showStep('products');
-}
-
-function renderProducts(){
-  const l=document.getElementById('product-list');
+// ============================================================
+// LISTA DE PRODUCTOS (reutilizable)
+// ============================================================
+function renderProductList(containerId, existingQty, prefix){
+  const l=document.getElementById(containerId);
+  if(!l)return;
   l.innerHTML='';
   PRODUCTS.forEach(p=>{
+    const val=(existingQty&&existingQty[p.id])||0;
     const row=document.createElement('div');
     row.className='product-row';
     row.innerHTML=`<span class="product-emoji">${p.emoji}</span>
       <span class="product-name">${p.name}</span>
       <div class="qty-controls">
-        <button class="qty-btn" onclick="chg('${p.id}',-1)"><i class="ti ti-minus"></i></button>
-        <span class="qty-num" id="q-${p.id}">${tempQty[p.id]||0}</span>
-        <button class="qty-btn" onclick="chg('${p.id}',1)"><i class="ti ti-plus"></i></button>
+        <button class="qty-btn" onclick="qtyChg('${prefix}${p.id}',-1)"><i class="ti ti-minus"></i></button>
+        <span class="qty-num" id="${prefix}${p.id}">${val}</span>
+        <button class="qty-btn" onclick="qtyChg('${prefix}${p.id}',1)"><i class="ti ti-plus"></i></button>
       </div>`;
     l.appendChild(row);
   });
 }
 
-function chg(id,delta){
-  tempQty[id]=Math.max(0,(tempQty[id]||0)+delta);
-  const el=document.getElementById('q-'+id);
-  if(el) el.textContent=tempQty[id];
-}
-
-function saveRoom(){
-  const hasAny=Object.values(tempQty).some(v=>v>0);
-  if(!hasAny){ alert('Agrega al menos un producto antes de guardar.'); return; }
-  const data=loadDay(editingDay);
-  const key = isExtra ? 'extras' : 'sala_'+currentRoom;
-  if(!data[key]) data[key]=[];
-
-  if(editingRecordIdx!==null){
-    const originalTs=data[key][editingRecordIdx].ts;
-    data[key][editingRecordIdx]={ ts:originalTs, productos:{...tempQty} };
-    showToast('✅ Registro actualizado');
-  } else {
-    // Si agregas a un día pasado, simula la hora actual pero apuntando a la fecha destino
-    const dRef = new Date();
-    const isoFecha = dateFromKey(editingDay); // YYYY-MM-DD
-    const finalTs = `${isoFecha}T${String(dRef.getHours()).padStart(2,'0')}:${String(dRef.getMinutes()).padStart(2,'0')}:${String(dRef.getSeconds()).padStart(2,'0')}.000Z`;
-    data[key].push({ ts:finalTs, productos:{...tempQty} });
-    showToast('✅ Registro guardado');
-  }
-  persistDay(editingDay,data);
-
-  if(viewingDay){
-    renderSummaryForDay(viewingDay);
-    showStep('summary');
-  } else {
-    showStep('main');
-  }
-}
-
-function cancelEdit(){
-  if(viewingDay){
-    showStep('summary');
-  } else {
-    showStep('main');
-  }
-}
-
-function deleteRecord(dayKey, salaKey, idx){
-  if(!confirm('¿Eliminar este registro?')) return;
-  const data=loadDay(dayKey);
-  data[salaKey].splice(idx,1);
-  if(data[salaKey].length===0) delete data[salaKey];
-  persistDay(dayKey,data);
-  showToast('🗑️ Registro eliminado');
-  renderSummaryForDay(dayKey);
-}
-
-// ========== CAMBIAR SALA DE UN REGISTRO ==========
-function openChangeRoomModal(dayKey, salaKey, idx){
-  modalTargetDay = dayKey;
-  modalTargetSalaKey = salaKey;
-  modalTargetIdx = idx;
-  modalSelectedRoom = null;
-  const current = parseInt(salaKey.replace('sala_',''));
-  const grid = document.getElementById('room-select-grid');
-  grid.innerHTML = '';
-  for(let i=1;i<=ROOMS;i++){
-    const btn = document.createElement('button');
-    btn.className = 'room-select-btn' + (i===current?' selected':'');
-    btn.textContent = 'Sala ' + i;
-    btn.onclick = () => {
-      modalSelectedRoom = i;
-      document.querySelectorAll('.room-select-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
-    };
-    grid.appendChild(btn);
-  }
-  document.getElementById('modal-room').style.display = 'flex';
-}
-
-function closeRoomModal(){
-  document.getElementById('modal-room').style.display = 'none';
-}
-
-function confirmChangeRoom(){
-  if(!modalSelectedRoom){
-    showToast('⚠️ Selecciona una sala');
-    return;
-  }
-  const newKey = 'sala_' + modalSelectedRoom;
-  const data = loadDay(modalTargetDay);
-  const record = data[modalTargetSalaKey][modalTargetIdx];
-
-  data[modalTargetSalaKey].splice(modalTargetIdx, 1);
-  if(data[modalTargetSalaKey].length === 0) delete data[modalTargetSalaKey];
-
-  if(!data[newKey]) data[newKey] = [];
-  data[newKey].push({ ts: record.ts, productos: {...record.productos} });
-
-  persistDay(modalTargetDay, data);
-  showToast('✅ Sala cambiada a Sala ' + modalSelectedRoom);
-  closeRoomModal();
-  renderSummaryForDay(modalTargetDay);
-}
-
-function goSummaryDay(dayKey,fromHist){
-  viewingDay=dayKey;
-  comingFromHist=fromHist||false;
-  const isToday=dayKey===todayKey();
-  document.getElementById('summary-title').textContent=isToday?'Resumen de hoy':'Resumen — '+fmtDateFromISO(dateFromKey(dayKey));
-  document.getElementById('back-label').textContent=comingFromHist?'Historial':'Salas';
-  
-  // Ahora el badge indica explícitamente que es editable.
-  document.getElementById('readonly-indicator').innerHTML=isToday?'':
-    '<div class="readonly-badge"><i class="ti ti-edit" style="font-size:13px"></i> Historial Pasado — Modo Edición Habilitado</div>';
-  
-  document.getElementById('btn-clear').style.display='block'; // Permitir limpiar cualquier día
-  renderSummaryForDay(dayKey);
-  showStep('summary');
-}
-
-function backFromSummary(){
-  viewingDay=null;
-  showStep('main');
-  if(comingFromHist) setTab('hist');
-}
-
-function renderSummaryForDay(dayKey){
-  const data=loadDay(dayKey);
-  const allRecords=[];
-  let totalUnidades=0,totalRegistros=0;
-
-  for(let i=1;i<=ROOMS;i++){
-    (data['sala_'+i]||[]).forEach((r,idx)=>{
-      totalRegistros++;
-      const total=PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
-      totalUnidades+=total;
-      allRecords.push({sala:i, salaKey:'sala_'+i, idx, ts:r.ts, productos:r.productos, total, isExtra:false});
-    });
-  }
-  (data['extras']||[]).forEach((r,idx)=>{
-    totalRegistros++;
-    const total=PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
-    totalUnidades+=total;
-    allRecords.push({sala:null, salaKey:'extras', idx, ts:r.ts, productos:r.productos, total, isExtra:true});
-  });
-
-  document.getElementById('stats-bar').innerHTML=`
-    <div class="stat"><div class="stat-label">Registros</div><div class="stat-val">${totalRegistros}</div></div>
-    <div class="stat"><div class="stat-label">Unidades totales</div><div class="stat-val">${totalUnidades}</div></div>`;
-  
-  if(allRecords.length===0){
-    document.getElementById('summary-list').innerHTML='<div class="empty-state"><i class="ti ti-mood-empty"></i>Sin registros en este día. ¡Puedes agregarlos con los botones de arriba!</div>';
-    return;
-  }
-  
-  allRecords.sort((a,b)=>{
-    if(a.isExtra && !b.isExtra) return 1;
-    if(!a.isExtra && b.isExtra) return -1;
-    if(a.isExtra && b.isExtra) return a.ts.localeCompare(b.ts);
-    return a.sala-b.sala||a.ts.localeCompare(b.ts);
-  });
-  
-  let html='';
-  allRecords.forEach(r=>{
-    const items=PRODUCTS.filter(p=>(r.productos[p.id]||0)>0);
-    // Habilitado para HOY y DÍAS ANTERIORES por igual:
-    const actionsHtml=`
-      <div class="record-actions">
-        <button class="action-btn edit" title="Editar" onclick="editRecord('${dayKey}','${r.salaKey}',${r.idx})"><i class="ti ti-pencil"></i></button>
-        ${!r.isExtra?`<button class="action-btn edit" title="Cambiar sala" onclick="openChangeRoomModal('${dayKey}','${r.salaKey}',${r.idx})" style="color:var(--accent);border-color:var(--accent);"><i class="ti ti-door"></i></button>`:''}
-        <button class="action-btn del" title="Eliminar" onclick="deleteRecord('${dayKey}','${r.salaKey}',${r.idx})"><i class="ti ti-trash"></i></button>
-      </div>`;
-    const roomLabel = r.isExtra ? '<span style="color:var(--extra)"><i class="ti ti-users"></i> Extras</span>' : 'Sala '+r.sala;
-    html+=`<div class="record-card">
-      <div class="record-header">
-        <span class="record-room">${roomLabel}</span>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span class="record-time"><i class="ti ti-clock"></i> ${fmtTime(r.ts)}</span>
-          ${actionsHtml}
-        </div>
-      </div>`;
-    items.forEach(p=>{
-      html+=`<div class="record-row"><span>${p.emoji} ${p.name}</span><span>${r.productos[p.id]}</span></div>`;
-    });
-    html+=`<div class="record-row" style="background:var(--surface2);font-weight:600;"><span>Total registro</span><span>${r.total}</span></div>`;
-    html+='</div>';
-  });
-  document.getElementById('summary-list').innerHTML=html;
+function qtyChg(elId, delta){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.textContent=Math.max(0,(parseInt(el.textContent)||0)+delta);
 }
 
 // ============================================================
-// LÓGICA DE EXPORTACIÓN Y AGRUPACIÓN POR RANGOS DE FECHAS
+// CALENDARIO
 // ============================================================
-function getDatesByPeriod() {
-  const period = document.getElementById('export-period').value;
-  const list = [];
-  const hoy = new Date();
-
-  if (period === 'day') {
-    list.push(viewingDay ? dateFromKey(viewingDay) : hoy.toISOString().slice(0,10));
-  } 
-  else if (period === 'week') {
-    // Calcular el lunes de la semana actual
-    const currentDay = hoy.getDay();
-    const distanciaLunes = currentDay === 0 ? -6 : 1 - currentDay;
-    const lunes = new Date(hoy);
-    lunes.setDate(hoy.getDate() + distanciaLunes);
-    
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(lunes);
-      d.setDate(lunes.getDate() + i);
-      list.push(d.toISOString().slice(0,10));
-    }
-  } 
-  else if (period === 'month') {
-    const año = hoy.getFullYear();
-    const mes = hoy.getMonth();
-    const ultimoDia = new Date(año, mes + 1, 0).getDate();
-    for (let d = 1; d <= ultimoDia; d++) {
-      const mm = String(mes + 1).padStart(2, '0');
-      const dd = String(d).padStart(2, '0');
-      list.push(`${año}-${mm}-${dd}`);
-    }
-  } 
-  else if (period === 'custom') {
-    const desdeStr = document.getElementById('export-from').value;
-    const hastaStr = document.getElementById('export-to').value;
-    if (!desdeStr || !hastaStr) return [];
-    
-    const dIni = new Date(desdeStr + 'T12:00:00');
-    const dFin = new Date(hastaStr + 'T12:00:00');
-    
-    let t = new Date(dIni);
-    while (t <= dFin) {
-      list.push(t.toISOString().slice(0,10));
-      t.setDate(t.getDate() + 1);
-    }
-  }
-  return list;
+function initCal(){
+  const now=new Date();
+  calYear=now.getFullYear();
+  calMonth=now.getMonth();
 }
+initCal();
 
-function exportBulkExcel() {
-  const fechas = getDatesByPeriod();
-  if (fechas.length === 0) {
-    showToast('⚠️ Configura correctamente las fechas de rango.');
-    return;
-  }
-  
-  // Consolidar todos los datos estructurados en memoria de los días elegidos
-  const datosConsolidados = {};
-  let totalRegistrosEncontrados = 0;
-  
-  fechas.forEach(f => {
-    const k = PREFIX + f;
-    const d = loadDay(k);
-    const conteo = Object.values(d).reduce((s,r)=>s+(r?r.length:0),0);
-    if (conteo > 0) {
-      datosConsolidados[f] = d;
-      totalRegistrosEncontrados += conteo;
-    }
+function renderCalendario(){
+  const allISO=new Set(allISOs());
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const todayStr=todayISO();
+  const mName=new Date(calYear,calMonth,1).toLocaleDateString('es-CL',{month:'long',year:'numeric'});
+  document.getElementById('cal-title').textContent=mName.charAt(0).toUpperCase()+mName.slice(1);
+
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML='';
+  ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].forEach(d=>{
+    const el=document.createElement('div');
+    el.className='cal-day-label';el.textContent=d;grid.appendChild(el);
   });
+  for(let i=0;i<firstDay;i++){
+    const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasData=allISO.has(iso);
+    const isToday=iso===todayStr;
+    const isSel=iso===calSelectedISO;
+    const el=document.createElement('div');
+    let cls='cal-day';
+    if(isSel) cls+=' selected';
+    else if(isToday) cls+=' today';
+    else if(hasData) cls+=' has-data';
+    el.className=cls;
+    el.innerHTML=d+(hasData||isToday?'<span class="dot"></span>':'');
+    el.onclick=()=>{ calSelectedISO=iso; renderCalendario(); renderCalendarioDia(iso); };
+    grid.appendChild(el);
+  }
+}
 
-  if (totalRegistrosEncontrados === 0) {
-    showToast('❌ No se encontraron datos para exportar en el periodo seleccionado.');
-    return;
+function renderCalendarioDia(iso){
+  const detail=document.getElementById('cal-day-detail');
+  const empty=document.getElementById('cal-empty');
+  const data=loadDay(iso);
+  const regs=countRegs(data);
+  const isToday=iso===todayISO();
+
+  document.getElementById('cal-detail-title').textContent=fmtISO(iso);
+
+  const detailList=document.getElementById('cal-detail-list');
+  if(regs===0){
+    detailList.innerHTML='<div style="font-size:13px;color:var(--text3);text-align:center;padding:12px 0;">No hay registros para este día.</div>';
+  } else {
+    const units=totalUnits(data);
+    detailList.innerHTML=`
+      <div class="stats-bar" style="margin-bottom:10px;">
+        <div class="stat"><div class="stat-label">Registros</div><div class="stat-val">${regs}</div></div>
+        <div class="stat"><div class="stat-label">Unidades</div><div class="stat-val">${units}</div></div>
+      </div>
+      <div id="cal-records-list"></div>
+      <button class="btn-primary" style="margin-top:8px;" onclick="expDiaDirecto('${iso}')"><i class="ti ti-download"></i> Exportar este día</button>
+      ${!isToday?`<button class="btn-danger" onclick="eliminarDia('${iso}')"><i class="ti ti-trash"></i> Eliminar día completo</button>`:''}`;
+    renderResumenDia(iso, data, null, 'cal-records-list', true, 'calendario');
   }
 
-  generarDocumentoExcel(datosConsolidados, `Reporte_Consolidado_${fechas[0]}_a_${fechas[fechas.length-1]}`);
+  detail.style.display='block';
+  empty.style.display='none';
 }
 
-function exportExcel(){
-  const d = {};
-  const f = dateFromKey(viewingDay);
-  d[f] = loadDay(viewingDay);
-  generarDocumentoExcel(d, `Bebestibles_${f}`);
+function eliminarDia(iso){
+  if(!confirm(`¿Eliminar TODOS los registros del ${fmtISO(iso)}? No se puede deshacer.`))return;
+  removeDay(iso);
+  calSelectedISO=null;
+  renderCalendario();
+  document.getElementById('cal-day-detail').style.display='none';
+  document.getElementById('cal-empty').style.display='block';
 }
 
-// Inyección y construcción estricta del Excel estructurado original basado en el mapa dinámico multi-fecha
-function generarDocumentoExcel(datosAgrupados, nombreArchivo){
+function expDiaDirecto(iso){ doExportForDays([iso],'Día '+iso); }
+function calPrev(){ calMonth--;if(calMonth<0){calMonth=11;calYear--;}calSelectedISO=null;renderCalendario();document.getElementById('cal-day-detail').style.display='none';document.getElementById('cal-empty').style.display='block';}
+function calNext(){ calMonth++;if(calMonth>11){calMonth=0;calYear++;}calSelectedISO=null;renderCalendario();document.getElementById('cal-day-detail').style.display='none';document.getElementById('cal-empty').style.display='block';}
+
+// ============================================================
+// EXPORTAR
+// ============================================================
+function irExportar(){ showPage('exportar'); }
+
+function initExportar(){
+  document.getElementById('exp-dia-input').value=todayISO();
+  populateMonthSelect();
+  renderSemanaLabel();
+  updateExportPreview();
+}
+
+function setExportTab(t){
+  exportTab=t;
+  ['dia','semana','mes'].forEach((x,i)=>{
+    document.querySelectorAll('.export-tab')[i].classList.toggle('active',x===t);
+    document.getElementById('exp-'+x).classList.toggle('active',x===t);
+  });
+  updateExportPreview();
+}
+
+function semanaNav(dir){ semanaOffset+=dir; renderSemanaLabel(); updateExportPreview(); }
+
+function getWeekRange(offset){
+  const now=new Date();
+  const dow=now.getDay();
+  const mon=new Date(now); mon.setDate(now.getDate()-dow+1+offset*7);
+  const sun=new Date(mon); sun.setDate(mon.getDate()+6);
+  return {start:mon.toISOString().slice(0,10), end:sun.toISOString().slice(0,10)};
+}
+
+function renderSemanaLabel(){
+  const {start,end}=getWeekRange(semanaOffset);
+  const s=new Date(start+'T12:00:00'), e=new Date(end+'T12:00:00');
+  const fmt=d=>d.toLocaleDateString('es-CL',{day:'numeric',month:'short'});
+  const name=semanaOffset===0?'Esta semana':semanaOffset===-1?'Semana pasada':`Semana del ${fmt(s)}`;
+  document.getElementById('week-label').textContent=`${name} (${fmt(s)} – ${fmt(e)})`;
+}
+
+function populateMonthSelect(){
+  const sel=document.getElementById('exp-mes-select');
+  sel.innerHTML='';
+  const months=[...new Set(allISOs().map(i=>i.slice(0,7)))].sort().reverse();
+  if(months.length===0){sel.innerHTML='<option>Sin datos</option>';return;}
+  months.forEach(m=>{
+    const opt=document.createElement('option');
+    opt.value=m;
+    const d=new Date(m+'-01T12:00:00');
+    opt.textContent=d.toLocaleDateString('es-CL',{month:'long',year:'numeric'});
+    sel.appendChild(opt);
+  });
+}
+
+function getDaysForExport(){
+  const all=allISOs();
+  if(exportTab==='dia'){
+    const d=document.getElementById('exp-dia-input').value;
+    return d&&all.includes(d)?[d]:[];
+  }
+  if(exportTab==='semana'){
+    const {start,end}=getWeekRange(semanaOffset);
+    return all.filter(i=>i>=start&&i<=end);
+  }
+  if(exportTab==='mes'){
+    const m=document.getElementById('exp-mes-select').value;
+    return m?all.filter(i=>i.startsWith(m)):[];
+  }
+  return [];
+}
+
+function updateExportPreview(){
+  if(exportTab==='semana') renderSemanaLabel();
+  const days=getDaysForExport();
+  const p=document.getElementById('export-preview');
+  if(days.length===0){p.textContent='No hay registros para el período seleccionado.';return;}
+  let r=0,u=0;
+  days.forEach(iso=>{const d=loadDay(iso);r+=countRegs(d);u+=totalUnits(d);});
+  p.textContent=`${days.length} día${days.length>1?'s':''} · ${r} registro${r>1?'s':''} · ${u} unidades totales`;
+}
+
+function doExport(){
+  const days=getDaysForExport();
+  if(days.length===0){alert('No hay registros para el período seleccionado.');return;}
+  let label='';
+  if(exportTab==='dia') label='Día_'+days[0];
+  else if(exportTab==='semana'){ const {start,end}=getWeekRange(semanaOffset); label='Semana_'+start+'_al_'+end; }
+  else { const m=document.getElementById('exp-mes-select').value; label='Mes_'+m; }
+  doExportForDays(days, label);
+}
+
+// ============================================================
+// EXCEL CON FORMATO VISUAL
+// ============================================================
+function doExportForDays(days, label){
+  const C_CAFE='B5652A', C_MID='D4956A', C_LIGHT='F5EDD8';
+  const C_WHITE='FFFFFF', C_DARK='1C0F07', C_DARK_FG='F5EDD8', C_ZERO='BBBBBB';
+
+  const bThin={top:{style:'thin',color:{rgb:C_MID}},bottom:{style:'thin',color:{rgb:C_MID}},left:{style:'thin',color:{rgb:C_MID}},right:{style:'thin',color:{rgb:C_MID}}};
+  const bMed={top:{style:'medium',color:{rgb:C_CAFE}},bottom:{style:'medium',color:{rgb:C_CAFE}},left:{style:'medium',color:{rgb:C_CAFE}},right:{style:'medium',color:{rgb:C_CAFE}}};
+
+  const sTitle=(sz=14)=>({font:{bold:true,sz,name:'Arial',color:{rgb:C_WHITE}},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'}});
+  const sSub=()=>({font:{sz:11,name:'Arial',color:{rgb:C_WHITE}},fill:{fgColor:{rgb:C_MID}},alignment:{horizontal:'center',vertical:'center'}});
+  const sHdr=()=>({font:{bold:true,sz:11,name:'Arial',color:{rgb:C_WHITE}},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:bMed});
+  const sData=(even,zero=false,bold=false,left=false)=>({font:{sz:11,name:'Arial',color:{rgb:zero?C_ZERO:C_DARK},bold},fill:{fgColor:{rgb:even?C_WHITE:C_LIGHT}},alignment:{horizontal:left?'left':'center',vertical:'center'},border:bThin});
+  const sTot=(left=false)=>({font:{bold:true,sz:12,name:'Arial',color:{rgb:C_DARK_FG}},fill:{fgColor:{rgb:C_DARK}},alignment:{horizontal:left?'left':'center',vertical:'center'},border:bMed});
+
+  function applyS(ws,r,c,s){const ref=XLSX.utils.encode_cell({r,c});if(!ws[ref])ws[ref]={v:'',t:'s'};ws[ref].s=s;}
+  function merge(ws,rs,re,cs,ce){if(!ws['!merges'])ws['!merges']=[];ws['!merges'].push({s:{r:rs,c:cs},e:{r:re,c:ce}});}
+
   const wb=XLSX.utils.book_new();
+  const generated=new Date().toLocaleString('es-CL');
 
-  const C_CAFE       ='B5652A';
-  const C_CAFE_MID   ='D4956A';
-  const C_CAFE_LIGHT ='F9F0E6';
-  const C_WHITE      ='FFFFFF';
-  const C_DARK       ='1C0F07';
-  const C_DARK_FG    ='F5EDD8';
-  const C_ZERO       ='CCCCCC';
-  const C_HIGHLIGHT  ='FFF3E8';
-  const C_GREEN      ='1E7C45';
-  const C_RED        ='C0392B';
-  const C_BLUE       ='2E86AB';
-  const C_PURPLE     ='6B4C7A';
-  const C_ORANGE     ='E67E22';
-  const C_EXTRA      ='2E86AB';
-  const C_EXTRA_BG   ='EBF5FB';
-
-  const bThin={top:{style:'thin',color:{rgb:C_CAFE_MID}},bottom:{style:'thin',color:{rgb:C_CAFE_MID}},left:{style:'thin',color:{rgb:C_CAFE_MID}},right:{style:'thin',color:{rgb:C_CAFE_MID}}};
-  const bMed ={top:{style:'medium',color:{rgb:C_CAFE}},bottom:{style:'medium',color:{rgb:C_CAFE}},left:{style:'medium',color:{rgb:C_CAFE}},right:{style:'medium',color:{rgb:C_CAFE}}};
-  const bThick={top:{style:'thick',color:{rgb:C_CAFE}},bottom:{style:'thick',color:{rgb:C_CAFE}},left:{style:'thick',color:{rgb:C_CAFE}},right:{style:'thick',color:{rgb:C_CAFE}}};
-
-  function cs(ws,r,c,style){
-    const ref=XLSX.utils.encode_cell({r,c});
-    if(!ws[ref]) ws[ref]={v:'',t:'s'};
-    ws[ref].s=style;
-  }
-
-  // ── HOJA 1: Detalle Completo Multi-Día ───────────────────
-  const allRecords=[];
-  const totArr=new Array(PRODUCTS.length).fill(0);
-  let grandTotal=0;
-
-  Object.keys(datosAgrupados).sort().forEach(fStr => {
-    const data = datosAgrupados[fStr];
-    const dLabel = fmtDateFromISO(fStr);
-
-    for(let i=1;i<=ROOMS;i++){
-      (data['sala_'+i]||[]).forEach(r=>{
-        let rt=0;
-        const row=[fStr, 'Sala '+i, fmtTime(r.ts)];
-        PRODUCTS.forEach((p,idx)=>{ const v=r.productos[p.id]||0; row.push(v); totArr[idx]+=v; rt+=v; });
-        row.push(rt);
-        grandTotal+=rt;
-        allRecords.push({type:'sala', row, fStr});
+  // Recoger registros
+  let allRecs=[];
+  days.sort().forEach(iso=>{
+    const data=loadDay(iso);
+    Object.keys(data).forEach(roomId=>{
+      (data[roomId]||[]).forEach(r=>{
+        allRecs.push({iso,roomId,ts:r.ts,productos:r.productos||{}});
       });
-    }
-    (data['extras']||[]).forEach(r=>{
+    });
+  });
+  allRecs.sort((a,b)=>{
+    if(a.iso!==b.iso) return a.iso.localeCompare(b.iso);
+    const ra=getRoomById(a.roomId), rb=getRoomById(b.roomId);
+    const orden={sala:0,auditorio:1,extras:2};
+    const oa=orden[ra.tipo]??3, ob=orden[rb.tipo]??3;
+    if(oa!==ob) return oa-ob;
+    return ra.label.localeCompare(rb.label,'es',{numeric:true})||a.ts.localeCompare(b.ts);
+  });
+
+  const NCOLS=3+PRODUCTS.length+1; // fecha,espacio,hora,productos...,total
+
+  // ── HOJA 1: DETALLE ──────────────────────────────────────
+  {
+    const rows=[];
+    rows.push([`Reporte de Bebestibles — ${label.replace(/_/g,' ')}`]);
+    rows.push([`Generado el ${generated}`]);
+    rows.push([]);
+    rows.push(['Fecha','Espacio','Hora',...PRODUCTS.map(p=>p.name),'Total']);
+
+    const totals=new Array(PRODUCTS.length).fill(0);
+    let grand=0;
+    const dataRows=[];
+    allRecs.forEach(r=>{
+      const room=getRoomById(r.roomId);
+      const row=[new Date(r.iso+'T12:00:00').toLocaleDateString('es-CL'), room.label, fmtTime(r.ts)];
       let rt=0;
-      const row=[fStr, 'Extras', fmtTime(r.ts)];
-      PRODUCTS.forEach((p,idx)=>{ const v=r.productos[p.id]||0; row.push(v); totArr[idx]+=v; rt+=v; });
-      row.push(rt);
-      grandTotal+=rt;
-      allRecords.push({type:'extra', row, fStr});
+      PRODUCTS.forEach((p,i)=>{const v=r.productos[p.id]||0;row.push(v);totals[i]+=v;rt+=v;});
+      row.push(rt); grand+=rt; dataRows.push(row);
     });
-  });
+    dataRows.forEach(r=>rows.push(r));
+    rows.push([]);
+    rows.push(['TOTAL GENERAL','','', ...totals, grand]);
 
-  // Ordenar por fecha, luego tipo y sala
-  allRecords.sort((a,b)=>{
-    if (a.fStr !== b.fStr) return a.fStr.localeCompare(b.fStr);
-    if(a.type==='extra' && b.type!=='extra') return 1;
-    if(a.type!=='extra' && b.type==='extra') return -1;
-    const na=parseInt(a.row[1].replace('Sala ','')) || 0; 
-    const nb=parseInt(b.row[1].replace('Sala ','')) || 0;
-    return na-nb||a.row[2].localeCompare(b.row[2]);
-  });
-
-  const hdr=['Fecha','Sala / Extras','Hora',...PRODUCTS.map(p=>p.name),'Total'];
-  const totalCols=hdr.length;
-
-  const sheetRows=[];
-  sheetRows.push([`Reporte Consolidado de Bebestibles`]);
-  sheetRows.push([]);
-  sheetRows.push(hdr);
-  allRecords.forEach(r=>sheetRows.push(r.row));
-  sheetRows.push([]);
-  sheetRows.push(['TOTAL GENERAL','','',...totArr,grandTotal]);
-
-  const ws1=XLSX.utils.aoa_to_sheet(sheetRows);
-  ws1['!cols']=[{wch:14},{wch:16},{wch:10},...PRODUCTS.map(()=>({wch:22})),{wch:14}];
-  ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:totalCols-1}}];
-  ws1['!rows']=[{hpt:38},{hpt:8},{hpt:40}];
-  for(let i=0;i<allRecords.length;i++) ws1['!rows'].push({hpt:24});
-
-  for(let c=0;c<totalCols;c++) cs(ws1,0,c,{font:{bold:true,sz:16,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'}});
-  for(let c=0;c<totalCols;c++) cs(ws1,2,c,{font:{bold:true,sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:bMed});
-
-  allRecords.forEach((rec,idx)=>{
-    const er=3+idx; const isEven=idx%2===0; const bg=isEven?C_WHITE:C_CAFE_LIGHT;
-    const isExtraRow = rec.type === 'extra';
-    for(let c=0;c<totalCols;c++){
-      const ref=XLSX.utils.encode_cell({r:er,c});
-      if(!ws1[ref]) ws1[ref]={v:0,t:'n'};
-      const v=ws1[ref].v;
-      const isZero=(c>=3&&c<totalCols-1&&v===0);
-      const isTotal=(c===totalCols-1);
-      const isSalaOrDate=(c===0||c===1);
-      ws1[ref].s={
-        font:{sz:11,name:'Calibri',color:{rgb:isZero?C_ZERO:isTotal?C_CAFE:isExtraRow?C_EXTRA:C_DARK},bold:isTotal||isSalaOrDate},
-        fill:{fgColor:{rgb:isExtraRow?C_EXTRA_BG:(isTotal?C_HIGHLIGHT:bg)}},
-        alignment:{horizontal:c<3?'left':'center',vertical:'center'},
-        border:bThin
-      };
-    }
-  });
-
-  const totRow1=3+allRecords.length+1;
-  for(let c=0;c<totalCols;c++){
-    const ref=XLSX.utils.encode_cell({r:totRow1,c});
-    if(!ws1[ref]) ws1[ref]={v:c<3?'':0,t:c<3?'s':'n'};
-    ws1[ref].s={font:{bold:true,sz:12,color:{rgb:C_DARK_FG},name:'Calibri'},fill:{fgColor:{rgb:C_DARK}},alignment:{horizontal:c<3?'left':'center',vertical:'center'},border:bThick};
-  }
-  XLSX.utils.book_append_sheet(wb,ws1,'Detalle');
-
-  // ── HOJA 2: Resumen Acumulado por Producto ───────────────
-  const g={}; PRODUCTS.forEach(p=>g[p.id]=0);
-  Object.values(datosAgrupados).forEach(data => {
-    for(let i=1;i<=ROOMS;i++) (data['sala_'+i]||[]).forEach(r=>PRODUCTS.forEach(p=>{g[p.id]+=(r.productos[p.id]||0);}));
-    (data['extras']||[]).forEach(r=>PRODUCTS.forEach(p=>{g[p.id]+=(r.productos[p.id]||0);}));
-  });
-  const totalGlobal=Object.values(g).reduce((s,v)=>s+v,0);
-
-  const pRows=[];
-  pRows.push(['Resumen Consolidado por Producto']);
-  pRows.push([`Periodo Procesado`]);
-  pRows.push([]);
-  pRows.push(['Producto','Total unidades','% del total']);
-  const sortedProds=[...PRODUCTS].sort((a,b)=>g[b.id]-g[a.id]);
-  sortedProds.forEach(p=>{
-    const pct=totalGlobal>0?((g[p.id]/totalGlobal)*100).toFixed(1)+'%':'0%';
-    pRows.push([p.name, g[p.id], pct]);
-  });
-  pRows.push([]);
-  pRows.push(['TOTAL',totalGlobal,'100%']);
-
-  const ws2=XLSX.utils.aoa_to_sheet(pRows);
-  ws2['!cols']=[{wch:26},{wch:18},{wch:16}];
-  ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}}];
-  ws2['!rows']=[{hpt:34},{hpt:24},{hpt:8},{hpt:38}];
-  for(let c=0;c<3;c++){
-    cs(ws2,0,c,{font:{bold:true,sz:15,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'}});
-    cs(ws2,1,c,{font:{sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE_MID}},alignment:{horizontal:'center',vertical:'center'}});
-    cs(ws2,3,c,{font:{bold:true,sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'},border:bMed});
-  }
-  sortedProds.forEach((p,idx)=>{
-    const er=4+idx; const bg=idx%2===0?C_WHITE:C_CAFE_LIGHT;
-    const isTop=(idx===0);
-    const pctVal = totalGlobal>0?(g[p.id]/totalGlobal)*100:0;
-    for(let c=0;c<3;c++){
-      const ref=XLSX.utils.encode_cell({r:er,c});
-      if(!ws2[ref]) ws2[ref]={v:'',t:'s'};
-      const v=ws2[ref].v;
-      const isZero=(c===1&&v===0);
-      let cellColor = isTop?C_HIGHLIGHT:bg;
-      let fontColor = C_DARK;
-      if(c===2 && pctVal > 0){
-        if(pctVal >= 30) fontColor = C_RED;
-        else if(pctVal >= 20) fontColor = C_ORANGE;
-        else if(pctVal >= 10) fontColor = C_GREEN;
-        else if(pctVal >= 5) fontColor = C_BLUE;
-        else fontColor = C_PURPLE;
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:14},{wch:14},{wch:8},...PRODUCTS.map(()=>({wch:18})),{wch:10}];
+    merge(ws,0,0,0,NCOLS-1); merge(ws,1,1,0,NCOLS-1);
+    for(let c=0;c<NCOLS;c++){ applyS(ws,0,c,sTitle()); applyS(ws,1,c,sSub()); applyS(ws,3,c,sHdr()); }
+    dataRows.forEach((_,i)=>{
+      const er=4+i, even=i%2===0;
+      for(let c=0;c<NCOLS;c++){
+        const ref=XLSX.utils.encode_cell({r:er,c});
+        const isZero=c>=3&&c<NCOLS-1&&ws[ref]&&ws[ref].v===0;
+        const isTot=c===NCOLS-1;
+        applyS(ws,er,c,sData(even,isZero,isTot,c<3));
       }
-      ws2[ref].s={
-        font:{sz:11,name:'Calibri',bold:isTop,color:{rgb:isZero?C_ZERO:fontColor}},
-        fill:{fgColor:{rgb:cellColor}},
-        alignment:{horizontal:c===0?'left':'center',vertical:'center'},
-        border:bThin
-      };
-    }
-  });
-  const tr2=4+sortedProds.length+1;
-  for(let c=0;c<3;c++){
-    const ref=XLSX.utils.encode_cell({r:tr2,c});
-    if(!ws2[ref]) ws2[ref]={v:'',t:'s'};
-    ws2[ref].s={font:{bold:true,sz:12,color:{rgb:C_DARK_FG},name:'Calibri'},fill:{fgColor:{rgb:C_DARK}},alignment:{horizontal:c===0?'left':'center',vertical:'center'},border:bThick};
-  }
-  XLSX.utils.book_append_sheet(wb,ws2,'Por producto');
-
-  // ── HOJA 3: Acumulado Global por Sala ───────────────────
-  const salaMap = {};
-  for(let i=1;i<=ROOMS;i++) salaMap['sala_'+i] = {label:'Sala '+i, regs:0, total:0, type:'sala'};
-  salaMap['extras'] = {label:'Extras', regs:0, total:0, type:'extra'};
-
-  Object.values(datosAgrupados).forEach(data => {
-    for(let i=1;i<=ROOMS;i++){
-      const records=data['sala_'+i]||[];
-      records.forEach(r => {
-        salaMap['sala_'+i].regs++;
-        salaMap['sala_'+i].total += PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
-      });
-    }
-    const extraRecords = data['extras']||[];
-    extraRecords.forEach(r => {
-      salaMap['extras'].regs++;
-      salaMap['extras'].total += PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
     });
-  });
-
-  const salaData = Object.values(salaMap).filter(r => r.regs > 0);
-  const totalSalas=salaData.reduce((s,r)=>s+r.total,0);
-  const totalRegsS=salaData.reduce((s,r)=>s+r.regs,0);
-
-  const sRows=[];
-  sRows.push(['Resumen Consolidado por Sala']);
-  sRows.push(['Periodo de Análisis']);
-  sRows.push([]);
-  sRows.push(['Sala / Extras','N° registros totales','Total unidades']);
-  salaData.forEach(r=>sRows.push([r.label, r.regs, r.total]));
-  sRows.push([]);
-  sRows.push(['TOTAL',totalRegsS,totalSalas]);
-
-  const ws3=XLSX.utils.aoa_to_sheet(sRows);
-  ws3['!cols']=[{wch:16},{wch:20},{wch:18}];
-  ws3['!merges']=[{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}}];
-  ws3['!rows']=[{hpt:34},{hpt:24},{hpt:8},{hpt:38}];
-  for(let c=0;c<3;c++){
-    cs(ws3,0,c,{font:{bold:true,sz:15,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'}});
-    cs(ws3,1,c,{font:{sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE_MID}},alignment:{horizontal:'center',vertical:'center'}});
-    cs(ws3,3,c,{font:{bold:true,sz:11,color:{rgb:C_WHITE},name:'Calibri'},fill:{fgColor:{rgb:C_CAFE}},alignment:{horizontal:'center',vertical:'center'},border:bMed});
+    const tr=4+dataRows.length+1;
+    for(let c=0;c<NCOLS;c++) applyS(ws,tr,c,sTot(c<3));
+    ws['!rows']=[]; ws['!rows'][0]={hpt:30}; ws['!rows'][1]={hpt:22}; ws['!rows'][3]={hpt:34};
+    dataRows.forEach((_,i)=>{ ws['!rows'][4+i]={hpt:22}; });
+    ws['!rows'][4+dataRows.length+1]={hpt:28};
+    XLSX.utils.book_append_sheet(wb,ws,'Detalle completo');
   }
-  const maxSalaVal = salaData.length>0?Math.max(...salaData.map(r=>r.total)):0;
-  salaData.forEach((r,idx)=>{
-    const er=4+idx; const bg=idx%2===0?C_WHITE:C_CAFE_LIGHT;
-    const intensity = maxSalaVal>0?(r.total/maxSalaVal):0;
-    const isExtra = r.type === 'extra';
-    for(let c=0;c<3;c++){
-      const ref=XLSX.utils.encode_cell({r:er,c});
-      if(!ws3[ref]) ws3[ref]={v:'',t:'s'};
-      let cellBg = bg;
-      let fontCol = C_DARK;
-      if(isExtra){
-        cellBg = C_EXTRA_BG;
-        fontCol = C_EXTRA;
-      } else if(c===2 && intensity > 0){
-        if(intensity >= 0.8) { cellBg = 'E74C3C'; fontCol = C_WHITE; }
-        else if(intensity >= 0.6) { cellBg = 'E67E22'; fontCol = C_WHITE; }
-        else if(intensity >= 0.4) { cellBg = 'F1C40F'; fontCol = C_DARK; }
-        else if(intensity >= 0.2) { cellBg = '2ECC71'; fontCol = C_WHITE; }
-        else { cellBg = '3498DB'; fontCol = C_WHITE; }
-      }
-      ws3[ref].s={
-        font:{sz:11,name:'Calibri',color:{rgb:fontCol},bold:c===0},
-        fill:{fgColor:{rgb:cellBg}},
-        alignment:{horizontal:c===0?'left':'center',vertical:'center'},
-        border:bThin
-      };
-    }
-  });
-  const tr3=4+salaData.length+1;
-  for(let c=0;c<3;c++){
-    const ref=XLSX.utils.encode_cell({r:tr3,c});
-    if(!ws3[ref]) ws3[ref]={v:'',t:'s'};
-    ws3[ref].s={font:{bold:true,sz:12,color:{rgb:C_DARK_FG},name:'Calibri'},fill:{fgColor:{rgb:C_DARK}},alignment:{horizontal:c===0?'left':'center',vertical:'center'},border:bThick};
+
+  // ── HOJA 2: POR PRODUCTO ─────────────────────────────────
+  {
+    const g={};PRODUCTS.forEach(p=>g[p.id]=0);
+    allRecs.forEach(r=>PRODUCTS.forEach(p=>{g[p.id]+=(r.productos[p.id]||0);}));
+    const grand=Object.values(g).reduce((s,v)=>s+v,0);
+    const sorted=[...PRODUCTS].sort((a,b)=>(g[b.id]||0)-(g[a.id]||0));
+    const rows=[];
+    rows.push(['Resumen por Producto']); rows.push([label.replace(/_/g,' ')]); rows.push([]);
+    rows.push(['Producto','Total unidades','% del total','Ranking']);
+    const dRows=sorted.map((p,i)=>[p.name, g[p.id], grand>0?((g[p.id]/grand)*100).toFixed(1)+'%':'0%', '#'+(i+1)]);
+    dRows.forEach(r=>rows.push(r));
+    rows.push([]); rows.push(['TOTAL',grand,'100%','']);
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:24},{wch:16},{wch:14},{wch:10}];
+    merge(ws,0,0,0,3); merge(ws,1,1,0,3);
+    for(let c=0;c<4;c++){ applyS(ws,0,c,sTitle()); applyS(ws,1,c,sSub()); applyS(ws,3,c,sHdr()); }
+    dRows.forEach((_,i)=>{const er=4+i,even=i%2===0;for(let c=0;c<4;c++){const ref=XLSX.utils.encode_cell({r:er,c});const isZ=c===1&&ws[ref]&&ws[ref].v===0;applyS(ws,er,c,sData(even,isZ,c===3,c===0));}});
+    const tr=4+dRows.length+1; for(let c=0;c<4;c++) applyS(ws,tr,c,sTot(c===0));
+    ws['!rows']=[]; ws['!rows'][0]={hpt:30}; ws['!rows'][1]={hpt:22}; ws['!rows'][3]={hpt:34};
+    XLSX.utils.book_append_sheet(wb,ws,'Por producto');
   }
-  XLSX.utils.book_append_sheet(wb,ws3,'Por sala');
 
-  XLSX.writeFile(wb, nombreArchivo + '.xlsx');
-}
+  // ── HOJA 3: POR ESPACIO ──────────────────────────────────
+  {
+    const sData2={};
+    allRecs.forEach(r=>{
+      if(!sData2[r.roomId])sData2[r.roomId]={regs:0,units:0};
+      sData2[r.roomId].regs++;
+      sData2[r.roomId].units+=PRODUCTS.reduce((s,p)=>s+(r.productos[p.id]||0),0);
+    });
+    const rows=[];
+    rows.push(['Resumen por Espacio']); rows.push([label.replace(/_/g,' ')]); rows.push([]);
+    rows.push(['Espacio','Tipo','N° registros','Total unidades']);
+    const dRows=Object.keys(sData2).sort((a,b)=>{
+      const ra=getRoomById(a),rb=getRoomById(b);
+      const orden={sala:0,auditorio:1,extras:2};
+      const oa=orden[ra.tipo]??3, ob=orden[rb.tipo]??3;
+      if(oa!==ob) return oa-ob;
+      return ra.label.localeCompare(rb.label,'es',{numeric:true});
+    }).map(id=>{const room=getRoomById(id);const d=sData2[id];const tipo=room.tipo==='auditorio'?'Auditorio':room.tipo==='extras'?'Extras':'Sala';return[room.label,tipo,d.regs,d.units];});
+    dRows.forEach(r=>rows.push(r));
+    const totR=dRows.reduce((s,r)=>s+r[2],0), totU=dRows.reduce((s,r)=>s+r[3],0);
+    rows.push([]); rows.push(['TOTAL','',totR,totU]);
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:16},{wch:12},{wch:14},{wch:16}];
+    merge(ws,0,0,0,3); merge(ws,1,1,0,3);
+    for(let c=0;c<4;c++){ applyS(ws,0,c,sTitle()); applyS(ws,1,c,sSub()); applyS(ws,3,c,sHdr()); }
+    dRows.forEach((_,i)=>{const er=4+i,even=i%2===0;for(let c=0;c<4;c++) applyS(ws,er,c,sData(even,false,false,c<2));});
+    const tr=4+dRows.length+1; for(let c=0;c<4;c++) applyS(ws,tr,c,sTot(c<2));
+    ws['!rows']=[]; ws['!rows'][0]={hpt:30}; ws['!rows'][1]={hpt:22}; ws['!rows'][3]={hpt:34};
+    XLSX.utils.book_append_sheet(wb,ws,'Por espacio');
+  }
 
-function clearDay(){
-  if(!confirm('¿Limpiar todos los registros de este día? No se puede deshacer.')) return;
-  localStorage.removeItem(viewingDay);
-  viewingDay=null;
-  showStep('main');
+  // ── HOJA 4: POR DÍA (solo si más de 1 día) ───────────────
+  if(days.length>1){
+    const rows=[];
+    rows.push(['Resumen por Día']); rows.push([label.replace(/_/g,' ')]); rows.push([]);
+    rows.push(['Fecha','Registros','Unidades']);
+    const dRows=days.sort().map(iso=>{
+      const d=loadDay(iso);
+      return[new Date(iso+'T12:00:00').toLocaleDateString('es-CL'), countRegs(d), totalUnits(d)];
+    });
+    dRows.forEach(r=>rows.push(r));
+    const totR=dRows.reduce((s,r)=>s+r[1],0), totU=dRows.reduce((s,r)=>s+r[2],0);
+    rows.push([]); rows.push(['TOTAL',totR,totU]);
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:18},{wch:12},{wch:14}];
+    merge(ws,0,0,0,2); merge(ws,1,1,0,2);
+    for(let c=0;c<3;c++){ applyS(ws,0,c,sTitle()); applyS(ws,1,c,sSub()); applyS(ws,3,c,sHdr()); }
+    dRows.forEach((_,i)=>{const er=4+i,even=i%2===0;for(let c=0;c<3;c++) applyS(ws,er,c,sData(even,false,false,c===0));});
+    const tr=4+dRows.length+1; for(let c=0;c<3;c++) applyS(ws,tr,c,sTot(c===0));
+    ws['!rows']=[]; ws['!rows'][0]={hpt:30}; ws['!rows'][1]={hpt:22}; ws['!rows'][3]={hpt:34};
+    XLSX.utils.book_append_sheet(wb,ws,'Por día');
+  }
+
+  XLSX.writeFile(wb,'Bebestibles_'+label+'.xlsx');
 }
 </script>
 </body>
